@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.localeventhub.app.view.fragments.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_mapView"
+            app:destination="@id/mapViewFragment" />
+        <action
+            android:id="@+id/action_home_to_postDetails"
+            app:destination="@id/postDetailsFragment" />
+        <action
+            android:id="@+id/action_home_to_profile"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapViewFragment"
+        android:name="com.localeventhub.app.view.fragments.MapViewFragment"
+        android:label="Map View"
+        tools:layout="@layout/fragment_map_view" />
+
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.localeventhub.app.view.fragments.PostDetailsFragment"
+        android:label="Post Details"
+        tools:layout="@layout/fragment_post_details" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.localeventhub.app.view.fragments.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_editProfile"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.localeventhub.app.view.fragments.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_edit_profile" />
+</navigation>

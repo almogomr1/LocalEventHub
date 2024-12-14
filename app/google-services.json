@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "844292290160",
+    "project_id": "localeventhub-58604",
+    "storage_bucket": "localeventhub-58604.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844292290160:android:e08315c31d99500a2f66b5",
+        "android_client_info": {
+          "package_name": "com.localeventhub.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJDlQeEL4juUkI_y-vgApMPmZPw8L_TZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
