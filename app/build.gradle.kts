@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     // LiveData
     implementation(libs.androidx.lifecycle.livedata)
+    implementation(libs.androidx.runtime.livedata)
     // Lifecycles only (without ViewModel or LiveData)
     implementation(libs.androidx.lifecycle.runtime)
 
