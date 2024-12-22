@@ -87,6 +87,36 @@ class FirebaseRepositoryImpl @Inject constructor(
 
     }
 
+    override fun updateUserData(user: User,imageUri: Uri?,callback: (Boolean, String?) -> Unit) {
+        val userId = auth.currentUser?.uid
+        user.userId = userId!!
+        if (imageUri == null){
+            val updates = hashMapOf<String, Any>(
+                "name" to user.name,
+            )
+            usersRef.document(userId).update(updates)
+            callback(true,"User Detail updated Successfully")
+            return
+        }
+        val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(user.profileImageUrl!!)
+        storageRef.delete()
+            .addOnSuccessListener {
+                uploadImageToFirebaseStorage(imageUri) { success, downloadUrl ->
+                    if (success) {
+                        user.profileImageUrl = downloadUrl
+                        usersRef.document(userId).update(mapOf(
+                            "name" to user.name,
+                            "profileImageUrl" to user.profileImageUrl,
+                        ),)
+                        callback(true,"User Detail updated Successfully")
+                    } else {
+                        callback(false,"Something went wrong")
+                    }
+                }
+            }
+
+    }
+
     override fun checkUserAuth(): Boolean {
         if(auth.currentUser != null){
             Constants.loggedUserId = auth.currentUser!!.uid

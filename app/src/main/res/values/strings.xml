@@ -14,4 +14,7 @@
     <string name="map">Map</string>
     <string name="profile">Profile</string>
     <string name="create_post">Create Post</string>
+    <string name="edit">Edit</string>
+    <string name="profile_update">Profile Update</string>
+    <string name="update">Update</string>
 </resources>

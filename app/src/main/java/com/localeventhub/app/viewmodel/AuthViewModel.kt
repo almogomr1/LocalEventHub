@@ -89,6 +89,10 @@ class AuthViewModel @Inject constructor(
         firebaseRepository.saveUserData(user,imageUri!!)
     }
 
+    fun updateUserData(user: User,imageUri: Uri?,callback: (Boolean, String?) -> Unit) {
+        firebaseRepository.updateUserData(user,imageUri,callback)
+    }
+
     fun checkUserAuth(): Boolean {
         return firebaseRepository.checkUserAuth()
     }

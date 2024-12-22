@@ -80,6 +80,7 @@ dependencies {
 
     // PICASSO IMAGE LIBRARY
     implementation(libs.picasso)
+    implementation(libs.androidx.exifinterface)
 
     // CIRCLE IMAGEVIEW
     implementation(libs.circleimageview)

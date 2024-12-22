@@ -39,6 +39,8 @@
         tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profile_to_editProfile"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/profileFragment"
             app:destination="@id/editProfileFragment" />
     </fragment>
 
@@ -46,5 +48,12 @@
         android:id="@+id/editProfileFragment"
         android:name="com.localeventhub.app.view.fragments.EditProfileFragment"
         android:label="Edit Profile"
-        tools:layout="@layout/fragment_edit_profile" />
+        tools:layout="@layout/fragment_edit_profile">
+
+        <action
+            android:id="@+id/action_editProfile_to_profile"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/editProfileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
 </navigation>

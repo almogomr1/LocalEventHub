@@ -44,7 +44,7 @@ class SignupFragment : Fragment() {
         pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
                 selectedImageUri = uri
-                binding.profileImage.setImageURI(uri) // Display the selected image in an ImageView
+                binding.profileImage.setImageURI(uri)
             } else {
                 Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
             }
@@ -55,7 +55,7 @@ class SignupFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         binding = FragmentSignupBinding.inflate(inflater, container, false)
 
         binding.signupLoginText.setOnClickListener {
@@ -89,7 +89,7 @@ class SignupFragment : Fragment() {
         }
 
         binding.uploadImageBtn.setOnClickListener {
-            pickImageLauncher.launch("image/*") // Open gallery to pick an image
+            pickImageLauncher.launch("image/*")
         }
 
         return binding.root

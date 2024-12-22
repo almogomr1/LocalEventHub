@@ -14,11 +14,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ActivityMainBinding
+import com.localeventhub.app.interfaces.OnFragmentChangeListener
 import com.localeventhub.app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
     private lateinit var binding:ActivityMainBinding
     private lateinit var context: Context
@@ -51,18 +52,7 @@ class MainActivity : AppCompatActivity() {
        binding.toolbar.setTitleTextColor(ContextCompat.getColor(context,R.color.white))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu,menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.logout_option){
-            authViewModel.logout()
-            val intent = Intent(context, AuthActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
+    override fun navigateToFragment(fragmentId: Int, popUpId: Int) {
+        navController.navigate(fragmentId)
     }
 }
