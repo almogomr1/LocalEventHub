@@ -4,6 +4,10 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.model.DocumentCollections
@@ -26,10 +30,23 @@ class FirebaseRepositoryImpl @Inject constructor(
                     Constants.loggedUserId = getLoggedUserId()
                     callback(true, null)
                 } else {
-                    callback(false, task.exception?.message)
+                    val errorMessage = getFirebaseErrorMessage(task.exception)
+                    callback(false, errorMessage)
                 }
             }
     }
+
+    private fun getFirebaseErrorMessage(exception: Exception?): String {
+        return when (exception) {
+            is FirebaseAuthWeakPasswordException -> "The password is too weak. Please choose a stronger password."
+            is FirebaseAuthInvalidCredentialsException -> "The email address is badly formatted. Please enter a valid email."
+            is FirebaseAuthUserCollisionException -> "An account already exists with this email. Please log in or use a different email."
+            is FirebaseAuthInvalidUserException -> "The user does not exist or has been disabled."
+            is FirebaseAuthException -> "Authentication failed: ${exception.message}"
+            else -> "An unknown error occurred. Please try again later."
+        }
+    }
+
 
     override fun signIn(email: String, password: String, callback: (Boolean, String?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
@@ -82,7 +99,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     }
 
     override fun fetchUserDetails(id: String) {
-        firebaseFireStore.document(id)
+        usersRef.document(id)
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
@@ -102,7 +119,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         auth.signOut()
     }
 
-    fun uploadImageToFirebaseStorage(imageUri: Uri, callback: (Boolean, String?) -> Unit) {
+    private fun uploadImageToFirebaseStorage(imageUri: Uri, callback: (Boolean, String?) -> Unit) {
         val storageReference: StorageReference = FirebaseStorage.getInstance().reference
         val uniqueFileName = "images/users/${UUID.randomUUID()}.jpg" // Unique file path in the storage
         val imageRef = storageReference.child(uniqueFileName)

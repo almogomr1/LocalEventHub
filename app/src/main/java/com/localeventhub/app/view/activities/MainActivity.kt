@@ -3,9 +3,15 @@ package com.localeventhub.app.view.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ActivityMainBinding
 import com.localeventhub.app.viewmodel.AuthViewModel
@@ -17,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
     private lateinit var context: Context
     private val authViewModel: AuthViewModel by viewModels()
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,12 +32,37 @@ class MainActivity : AppCompatActivity() {
         context = this
         authViewModel.fetUserDetails(authViewModel.getLoggedUserId())
 
-        binding.logoutBtn.setOnClickListener {
+        setUpToolbar()
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_home) as NavHostFragment
+
+        navController = navHostFragment.navController
+
+        binding.bottomNavigationView.setupWithNavController(navController)
+
+        binding.fab.setOnClickListener {
+
+        }
+
+    }
+
+    private fun setUpToolbar(){
+        setSupportActionBar(binding.toolbar)
+       binding.toolbar.setTitleTextColor(ContextCompat.getColor(context,R.color.white))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.logout_option){
             authViewModel.logout()
             val intent = Intent(context, AuthActivity::class.java)
             startActivity(intent)
             finish()
         }
-
+        return super.onOptionsItemSelected(item)
     }
 }
