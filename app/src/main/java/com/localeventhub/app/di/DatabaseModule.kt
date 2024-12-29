@@ -2,9 +2,11 @@ package com.localeventhub.app.di
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.firestore.FirebaseFirestore
 import com.localeventhub.app.repository.DatabaseRepository
-import com.localeventhub.app.room.AppDao
+import com.localeventhub.app.room.PostDao
 import com.localeventhub.app.room.AppDatabase
+import com.localeventhub.app.room.CommentDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +19,10 @@ import javax.inject.Singleton
 object DatabaseModule {
 
     @Provides
-    fun provideAppDao(appDatabase: AppDatabase): AppDao = appDatabase.appDao()
+    fun providePostDao(appDatabase: AppDatabase): PostDao = appDatabase.postDao()
+
+    @Provides
+    fun provideCommentDao(appDatabase: AppDatabase): CommentDao = appDatabase.commentDao()
 
     @Provides
     @Singleton
@@ -27,8 +32,9 @@ object DatabaseModule {
             AppDatabase::class.java,
             "local_event_hub_database"
         )
+            .allowMainThreadQueries()
             .build()
 
     @Provides
-    fun provideDatabaseRepository(appDao: AppDao): DatabaseRepository = DatabaseRepository(appDao)
+    fun provideDatabaseRepository(firestore: FirebaseFirestore, postDao: PostDao, commentDao: CommentDao): DatabaseRepository = DatabaseRepository(firestore,postDao,commentDao)
 }

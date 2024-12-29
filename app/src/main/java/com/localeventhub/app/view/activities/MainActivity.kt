@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
         binding.bottomNavigationView.setupWithNavController(navController)
 
         binding.fab.setOnClickListener {
-
+           startActivity(Intent(context,CreatePostActivity::class.java))
         }
 
     }

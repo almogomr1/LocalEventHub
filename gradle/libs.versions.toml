@@ -3,6 +3,8 @@ agp = "8.6.1"
 circleimageview = "3.1.0"
 exifinterface = "1.3.7"
 firebaseBom = "33.7.0"
+googlePlayServicesPlaces = "18.0.0"
+gson = "2.11.0"
 hilt = "2.49"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
@@ -21,6 +23,7 @@ room = "2.6.1"
 google-maps = "18.1.0"
 play-services-location = "21.0.1"
 runtimeLivedata = "1.7.6"
+places = "4.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +43,8 @@ firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
+google-play-services-places = { module = "com.google.android.gms:play-services-places", version.ref = "googlePlayServicesPlaces" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -55,6 +60,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 google-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "google-maps" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-services-location" }
+places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

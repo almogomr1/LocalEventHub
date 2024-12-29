@@ -54,9 +54,11 @@ class LoginFragment : Fragment() {
             authViewModel.validateAndLogin(email,password){ status,message->
                 Constants.dismiss()
                 if (status){
-                    val intent = Intent(requireContext(), MainActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
+                    startActivity(Intent(requireContext(), MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }).apply {
+                        requireActivity().finish()
+                    }
                 }
                 else{
                  Constants.showAlert(requireActivity(),message!!)

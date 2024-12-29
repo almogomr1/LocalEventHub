@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.model.DocumentCollections
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.localeventhub.app.model.User
@@ -166,5 +165,7 @@ class FirebaseRepositoryImpl @Inject constructor(
                 callback(false, exception.message)
             }
     }
+
+
 
 }

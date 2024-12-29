@@ -9,4 +9,6 @@ data class User(
     var profileImageUrl: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
-) : Serializable
+) : Serializable{
+    constructor():this("","","")
+}

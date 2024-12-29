@@ -17,4 +17,14 @@
     <string name="edit">Edit</string>
     <string name="profile_update">Profile Update</string>
     <string name="update">Update</string>
+    <string name="google_map_api_key">AIzaSyAoHXNlct7AHCY0d7YgMvavHQanhkYX8PQ</string>
+    <string name="post_empty_message">There is no post yet!</string>
+    <string name="attach_post_image">Attach Post Image</string>
+    <string name="post_title">Post Title</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
+    <string name="tags">Tags</string>
+    <string name="hint_comma_seperate">Hint (comma seperate)</string>
+    <string name="save">Save</string>
+    <string name="location">Location</string>
 </resources>
