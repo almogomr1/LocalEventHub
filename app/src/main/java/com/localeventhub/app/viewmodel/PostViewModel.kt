@@ -16,30 +16,33 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class PostViewModel @Inject constructor(private val firebaseRepository: FirebaseRepository,private val database:DatabaseRepository): ViewModel(){
+class PostViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepository,
+    private val database: DatabaseRepository
+) : ViewModel() {
 
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts: StateFlow<List<Post>> get() = _posts
 
 
-    fun getPostId():String{
+    fun getPostId(): String {
         return database.getPostId()
     }
 
-    fun addPost(post: Post,callback: (Boolean,String) -> Unit) {
+    fun addPost(post: Post, callback: (Boolean, String) -> Unit) {
         viewModelScope.launch {
-            database.addPost(post,callback)
+            database.addPost(post, callback)
         }
     }
 
-    fun updatePost(post: Post,callback: (Boolean,String) -> Unit) {
+    fun updatePost(post: Post, callback: (Boolean, String) -> Unit) {
         viewModelScope.launch {
-            database.updatePost(post,callback)
+            database.updatePost(post, callback)
         }
     }
 
-    fun deletePost(post: Post,callback: (Boolean,String) -> Unit) {
-            database.deletePost(post,callback)
+    fun deletePost(post: Post, callback: (Boolean, String) -> Unit) {
+        database.deletePost(post, callback)
     }
 
     fun loadPosts(isOnline: Boolean) {
@@ -51,7 +54,15 @@ class PostViewModel @Inject constructor(private val firebaseRepository: Firebase
         }
     }
 
-   fun uploadImageToFirebaseStorage(imageUri: Uri, callback: (Boolean, String?) -> Unit) {
+    fun deleteImageFromFirebaseStorage(imageUrl: String, callback: (Boolean, String) -> Unit) {
+        val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+        storageRef.delete()
+            .addOnSuccessListener {
+                callback(true, "Image Deleted Successfully")
+            }
+    }
+
+    fun uploadImageToFirebaseStorage(imageUri: Uri, callback: (Boolean, String?) -> Unit) {
         val storageReference: StorageReference = FirebaseStorage.getInstance().reference
         val uniqueFileName = "images/posts/${UUID.randomUUID()}.jpg"
         val imageRef = storageReference.child(uniqueFileName)

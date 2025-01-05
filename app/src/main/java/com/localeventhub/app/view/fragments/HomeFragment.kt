@@ -1,17 +1,26 @@
 package com.localeventhub.app.view.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.localeventhub.app.R
 import com.localeventhub.app.adapters.PostAdapter
 import com.localeventhub.app.databinding.FragmentHomeBinding
 import com.localeventhub.app.interfaces.OnFragmentChangeListener
+import com.localeventhub.app.model.Post
+import com.localeventhub.app.view.activities.UpdatePostActivity
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,6 +71,35 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
+
+       postAdapter.setOnItemClickListener(object :PostAdapter.OnItemClickListener{
+           override fun onItemClick(position: Int,post: Post) {
+               val bundle = Bundle().apply {
+                   putSerializable("post", post)
+               }
+               findNavController().navigate(R.id.action_home_to_postDetails, bundle)
+           }
+
+           override fun onItemEditClick(position: Int,post: Post) {
+              startActivity(Intent(requireActivity(),UpdatePostActivity::class.java).apply {
+                  putExtra("POST",post)
+              })
+           }
+
+           override fun onItemDeleteClick(position: Int,post: Post) {
+
+           }
+
+           override fun onItemLikeClick(position: Int, post: Post) {
+
+           }
+
+           override fun onItemCommentClick(position: Int, post: Post) {
+
+           }
+
+       })
     }
+
 
 }

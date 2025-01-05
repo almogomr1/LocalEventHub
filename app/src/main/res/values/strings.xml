@@ -27,4 +27,8 @@
     <string name="hint_comma_seperate">Hint (comma seperate)</string>
     <string name="save">Save</string>
     <string name="location">Location</string>
+    <string name="view">View</string>
+    <string name="delete">Delete</string>
+    <string name="like">Like</string>
+    <string name="comment">Comment</string>
 </resources>

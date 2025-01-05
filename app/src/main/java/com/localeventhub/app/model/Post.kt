@@ -13,14 +13,14 @@ import java.io.Serializable
 data class Post(
     @PrimaryKey @ColumnInfo(name = "post_id") val postId: String,
     @ColumnInfo(name = "user_id") val userId: String,
-    val description: String,
-    @ColumnInfo(name = "image_url") val imageUrl: String?,
-    @Embedded val location: EventLocation?,
+    var description: String,
+    @ColumnInfo(name = "image_url") var imageUrl: String?,
+    @Embedded var location: EventLocation?,
     val timestamp: Long = System.currentTimeMillis(),
-    val likesCount: Int = 0,
+    var likesCount: Int = 0,
     @TypeConverters(Converters::class)
     @ColumnInfo(name = "tags")
-    val tags: List<String> = listOf(),
+    var tags: List<String> = listOf(),
     @Embedded val user: User? = Constants.loggedUser,
 ): Serializable{
     constructor():this("","","","",EventLocation(0.0,0.0,""))
