@@ -1,12 +1,15 @@
 package com.localeventhub.app.view.fragments
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import com.localeventhub.app.R
 import com.localeventhub.app.adapters.PostAdapter.OnItemClickListener
 import com.localeventhub.app.databinding.FragmentPostDetailsBinding
@@ -14,6 +17,7 @@ import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.utils.ExifTransformation
 import com.localeventhub.app.view.activities.UpdatePostActivity
+import com.localeventhub.app.viewmodel.PostViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +26,7 @@ class PostDetailsFragment : Fragment() {
 
     private lateinit var binding:FragmentPostDetailsBinding
     private var post:Post?=null
-
+    private val postViewModel: PostViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,8 +62,50 @@ class PostDetailsFragment : Fragment() {
                 showPopupMenu(v, post!!)
             }
 
-            binding.postLikeView.setOnClickListener {
+            val likedByList = post!!.getLikedByList()
+            val isLiked = likedByList.contains(Constants.loggedUserId)
+            binding.postLikeView.text = if (isLiked) "Liked" else "Like"
+            if (isLiked) {
+                binding.postLikeView.apply {
+                    setTypeface(null, Typeface.BOLD)
+                    setTextColor(ContextCompat.getColor(context, R.color.primary))
 
+                }
+            } else {
+                binding.postLikeView.apply {
+                    setTypeface(null, Typeface.NORMAL)
+                    setTextColor(ContextCompat.getColor(context, R.color.black))
+
+                }
+            }
+            binding.postLikeView.setOnClickListener {
+                postViewModel.likePost(post!!, Constants.loggedUserId) { success, message ->
+                    if (success) {
+                        post.let {
+                            val likedByList = it!!.getLikedByList().toMutableList()
+                            if (likedByList.contains(Constants.loggedUserId)) {
+                                likedByList.remove(Constants.loggedUserId)
+                                binding.postLikeView.apply {
+                                    text = "Like"
+                                    setTypeface(null, Typeface.NORMAL)
+                                    setTextColor(ContextCompat.getColor(context, R.color.black))
+                                }
+
+                            } else {
+                                likedByList.add(Constants.loggedUserId)
+                                binding.postLikeView.apply {
+                                    text = "Liked"
+                                    setTypeface(null, Typeface.BOLD)
+                                    setTextColor(ContextCompat.getColor(context, R.color.primary))
+                                }
+
+                            }
+                            it.setLikedByList(likedByList)
+                        }
+                    } else {
+                        // Show an error message
+                    }
+                }
             }
 
             binding.postCommentView.setOnClickListener {
@@ -72,7 +118,6 @@ class PostDetailsFragment : Fragment() {
         val popupMenu = PopupMenu(view.context, view)
         popupMenu.menuInflater.inflate(R.menu.post_pop_up_menu, popupMenu.menu)
 
-        // Hide "Edit" and "Delete" options based on the condition
         popupMenu.menu.findItem(R.id.menu_view).isVisible = false
         if (item.user?.userId != Constants.loggedUserId) {
             popupMenu.menu.findItem(R.id.menu_edit).isVisible = false

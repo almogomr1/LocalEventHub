@@ -1,11 +1,17 @@
 package com.localeventhub.app.repository
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.localeventhub.app.model.EventLocation
 import com.localeventhub.app.model.Post
+import com.localeventhub.app.model.User
 import com.localeventhub.app.room.CommentDao
 import com.localeventhub.app.room.PostDao
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -45,6 +51,22 @@ class DatabaseRepository @Inject constructor(
             }
     }
 
+    fun updatePostLikes(postId: String, likedByList: List<String>, callback: (Boolean, String) -> Unit) {
+        val postRef = firestore.collection("POSTS").document(postId)
+
+        postRef.update("likedBy", likedByList)
+            .addOnSuccessListener {
+                val likedByJson = Gson().toJson(likedByList)
+                CoroutineScope(Dispatchers.IO).launch {
+                    postDao.updateLikedBy(postId,likedByJson)
+                }
+                callback(true, "Likes updated successfully")
+            }
+            .addOnFailureListener { exception ->
+                callback(false, exception.message ?: "Error updating likes")
+            }
+    }
+
     fun deletePost(post: Post, callback: (Boolean, String) -> Unit) {
         firestore.collection("POSTS").document(post.postId)
             .delete()
@@ -63,11 +85,58 @@ class DatabaseRepository @Inject constructor(
     }
 
     suspend fun syncPostsFromFireStore() {
-        val posts = firestore.collection("POSTS").get().await().documents.mapNotNull { doc ->
-            doc.toObject(Post::class.java)
+        val posts = firestore.collection("POSTS").get().await().documents.mapNotNull { document ->
+            document.toPost()
         }
         postDao.clearPosts()
         postDao.insertPosts(posts)
     }
+
+    fun DocumentSnapshot.toPost(): Post? {
+        return try {
+            val postId = getString("postId") ?: return null
+            val userId = getString("userId") ?: return null
+            val description = getString("description") ?: ""
+            val imageUrl = getString("imageUrl")
+            val location = get("location") as? Map<String, Any> // Assuming EventLocation is mapped
+            val timestamp = getLong("timestamp") ?: System.currentTimeMillis()
+            val likesCount = getLong("likesCount")?.toInt() ?: 0
+            val likedByList = get("likedBy") as? List<String> ?: emptyList()
+            val user = get("user") as? Map<String, Any> // Assuming User is mapped
+            val tags = get("tags") as? List<String> ?: emptyList()
+
+            val eventLocation = location?.let {
+                EventLocation(
+                    it["latitude"] as? Double ?: 0.0,
+                    it["longitude"] as? Double ?: 0.0,
+                    it["name"] as? String ?: ""
+                )
+            }
+
+            val loggedUser = user?.let {
+                User(
+                    name = it["name"] as? String ?: "",
+                    profileImageUrl = it["profileImageUrl"] as? String ?: ""
+                )
+            }
+
+            Post(
+                postId = postId,
+                userId = userId,
+                description = description,
+                imageUrl = imageUrl,
+                location = eventLocation,
+                timestamp = timestamp,
+                likesCount = likesCount,
+                likedBy = Gson().toJson(likedByList), // Convert List<String> to JSON String
+                tags = tags,
+                user = loggedUser
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 
 }

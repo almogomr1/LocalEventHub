@@ -33,6 +33,7 @@ object DatabaseModule {
             "local_event_hub_database"
         )
             .allowMainThreadQueries()
+            .addMigrations(AppDatabase.MIGRATION_6_7)
             .build()
 
     @Provides

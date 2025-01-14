@@ -20,6 +20,7 @@ import com.localeventhub.app.adapters.PostAdapter
 import com.localeventhub.app.databinding.FragmentHomeBinding
 import com.localeventhub.app.interfaces.OnFragmentChangeListener
 import com.localeventhub.app.model.Post
+import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.view.activities.UpdatePostActivity
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +34,7 @@ class HomeFragment : Fragment() {
 
     private val postViewModel: PostViewModel by viewModels()
     private lateinit var postAdapter: PostAdapter // Assume you have a RecyclerView adapter
+    private var posts = mutableListOf<Post>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -54,9 +56,13 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch {
             postViewModel.posts.collect { postList ->
-                postAdapter.updatePosts(postList)
-                binding.emptyPostView.visibility = if (postList.isEmpty()) View.VISIBLE else View.GONE
-                binding.homePostsRecyclerview.visibility = if (postList.isNotEmpty()) View.VISIBLE else View.GONE
+                if (postList.isNotEmpty()){
+                    posts.clear()
+                }
+                posts.addAll(postList)
+                postAdapter.updatePosts(posts)
+                binding.emptyPostView.visibility = if (posts.isEmpty()) View.VISIBLE else View.GONE
+                binding.homePostsRecyclerview.visibility = if (posts.isNotEmpty()) View.VISIBLE else View.GONE
             }
         }
 
@@ -91,7 +97,24 @@ class HomeFragment : Fragment() {
            }
 
            override fun onItemLikeClick(position: Int, post: Post) {
-
+               postViewModel.likePost(post, Constants.loggedUserId) { success, message ->
+                   if (success) {
+                       post.let {
+                           val likedByList = it.getLikedByList().toMutableList()
+                           if (likedByList.contains(Constants.loggedUserId)) {
+                               likedByList.remove(Constants.loggedUserId)
+                           } else {
+                               likedByList.add(Constants.loggedUserId)
+                           }
+                          it.setLikedByList(likedByList)
+                       }
+                       posts.removeAt(position)
+                       posts.add(position,post)
+                       postAdapter.notifyItemChanged(position)
+                   } else {
+                       // Show an error message
+                   }
+               }
            }
 
            override fun onItemCommentClick(position: Int, post: Post) {

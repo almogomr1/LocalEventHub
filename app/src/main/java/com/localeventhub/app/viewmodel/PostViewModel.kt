@@ -8,6 +8,7 @@ import com.google.firebase.storage.StorageReference
 import com.localeventhub.app.firebase.FirebaseRepository
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.repository.DatabaseRepository
+import com.localeventhub.app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,6 +79,25 @@ class PostViewModel @Inject constructor(
             .addOnFailureListener { exception ->
                 callback(false, exception.message)
             }
+    }
+
+    fun likePost(post: Post, userId: String,callback: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            post.let {
+                val likedByList = it.getLikedByList().toMutableList()
+                if (likedByList.contains(userId)) {
+                    likedByList.remove(userId)
+                } else {
+                    likedByList.add(userId)
+                }
+
+                database.updatePostLikes(post.postId, likedByList) { success, message ->
+                    if (success) {
+                        callback(true,"")
+                    }
+                }
+            }
+        }
     }
 
 }

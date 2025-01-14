@@ -1,12 +1,12 @@
 package com.localeventhub.app.adapters
 
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ItemPostBinding
@@ -15,14 +15,15 @@ import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.utils.ExifTransformation
 import com.squareup.picasso.Picasso
 
-class PostAdapter(private val posts: MutableList<Post>) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+class PostAdapter(private val posts: MutableList<Post>) :
+    RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     interface OnItemClickListener {
-        fun onItemClick(position: Int,post: Post)
-        fun onItemEditClick(position: Int,post: Post)
-        fun onItemDeleteClick(position: Int,post: Post)
-        fun onItemLikeClick(position: Int,post: Post)
-        fun onItemCommentClick(position: Int,post: Post)
+        fun onItemClick(position: Int, post: Post)
+        fun onItemEditClick(position: Int, post: Post)
+        fun onItemDeleteClick(position: Int, post: Post)
+        fun onItemLikeClick(position: Int, post: Post)
+        fun onItemCommentClick(position: Int, post: Post)
     }
 
     private var mListener: OnItemClickListener? = null
@@ -33,7 +34,7 @@ class PostAdapter(private val posts: MutableList<Post>) : RecyclerView.Adapter<P
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding,mListener!!)
+        return PostViewHolder(binding, mListener!!)
     }
 
     override fun getItemCount(): Int = posts.size
@@ -49,34 +50,59 @@ class PostAdapter(private val posts: MutableList<Post>) : RecyclerView.Adapter<P
         holder.bind(post)
     }
 
-    class PostViewHolder(private val binding: ItemPostBinding,private val mListener: OnItemClickListener) : RecyclerView.ViewHolder(binding.root) {
+    class PostViewHolder(
+        private val binding: ItemPostBinding,
+        private val mListener: OnItemClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(post: Post) {
             binding.apply {
-                Picasso.get().load(post.user?.profileImageUrl).transform(ExifTransformation(post.user?.profileImageUrl!!)).placeholder(R.drawable.placeholder).into(userImage)
+                Picasso.get().load(post.user?.profileImageUrl)
+                    .transform(ExifTransformation(post.user?.profileImageUrl!!))
+                    .placeholder(R.drawable.placeholder).into(userImage)
                 userName.text = post.user.name
                 postDate.text = Constants.getTimeAgo(post.timestamp)
-                if (post.imageUrl.isNullOrEmpty()){
+                if (post.imageUrl.isNullOrEmpty()) {
                     postImage.visibility = View.GONE
-                }
-                else{
+                } else {
                     postImage.visibility = View.VISIBLE
-                    Picasso.get().load(post.imageUrl).transform(ExifTransformation(post.imageUrl!!)).placeholder(R.drawable.placeholder).into(postImage)
+                    Picasso.get().load(post.imageUrl).transform(ExifTransformation(post.imageUrl!!))
+                        .placeholder(R.drawable.placeholder).into(postImage)
                 }
+                val likedByList = post.getLikedByList()
+                val isLiked = likedByList.contains(Constants.loggedUserId)
+                binding.postLikeView.text = if (isLiked) "Liked" else "Like"
+                if (isLiked) {
+                    binding.postLikeView.apply {
+                        setTypeface(null, Typeface.BOLD)
+                        setTextColor(ContextCompat.getColor(context, R.color.primary))
 
-                binding.root.setOnClickListener {
-                    mListener.onItemClick(layoutPosition,post)
+                    }
+                } else {
+                    binding.postLikeView.apply {
+                        setTypeface(null, Typeface.NORMAL)
+                        setTextColor(ContextCompat.getColor(context, R.color.black))
+
+                    }
                 }
 
                 binding.postLikeView.setOnClickListener {
                     mListener.onItemLikeClick(layoutPosition,post)
                 }
 
-                binding.postCommentView.setOnClickListener {
-                    mListener.onItemCommentClick(layoutPosition,post)
+                binding.root.setOnClickListener {
+                    mListener.onItemClick(layoutPosition, post)
                 }
 
-                binding.postMoreOption.setOnClickListener {view ->
-                    showPopupMenu(view, post,mListener)
+                binding.postLikeView.setOnClickListener {
+                    mListener.onItemLikeClick(layoutPosition, post)
+                }
+
+                binding.postCommentView.setOnClickListener {
+                    mListener.onItemCommentClick(layoutPosition, post)
+                }
+
+                binding.postMoreOption.setOnClickListener { view ->
+                    showPopupMenu(view, post, mListener)
 //                    mListener.onItemMoreClick(layoutPosition,binding.postMoreOption)
                 }
 
@@ -84,7 +110,7 @@ class PostAdapter(private val posts: MutableList<Post>) : RecyclerView.Adapter<P
             }
         }
 
-        private fun showPopupMenu(view: View, item: Post,listener: OnItemClickListener) {
+        private fun showPopupMenu(view: View, item: Post, listener: OnItemClickListener) {
             val popupMenu = PopupMenu(view.context, view)
             popupMenu.menuInflater.inflate(R.menu.post_pop_up_menu, popupMenu.menu)
 
@@ -92,8 +118,7 @@ class PostAdapter(private val posts: MutableList<Post>) : RecyclerView.Adapter<P
             if (item.user?.userId != Constants.loggedUserId) {
                 popupMenu.menu.findItem(R.id.menu_edit).isVisible = false
                 popupMenu.menu.findItem(R.id.menu_delete).isVisible = false
-            }
-            else{
+            } else {
                 popupMenu.menu.findItem(R.id.menu_edit).isVisible = true
                 popupMenu.menu.findItem(R.id.menu_delete).isVisible = true
             }
@@ -101,13 +126,15 @@ class PostAdapter(private val posts: MutableList<Post>) : RecyclerView.Adapter<P
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.menu_view -> {
-                       mListener.onItemClick(layoutPosition,item)
+                        mListener.onItemClick(layoutPosition, item)
                     }
+
                     R.id.menu_edit -> {
-                        mListener.onItemEditClick(layoutPosition,item)
+                        mListener.onItemEditClick(layoutPosition, item)
                     }
+
                     R.id.menu_delete -> {
-                        mListener.onItemDeleteClick(layoutPosition,item)
+                        mListener.onItemDeleteClick(layoutPosition, item)
                     }
 
                 }
