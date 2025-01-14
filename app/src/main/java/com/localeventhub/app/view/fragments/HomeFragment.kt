@@ -4,12 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +21,7 @@ import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.view.activities.UpdatePostActivity
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -53,16 +51,30 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupRecyclerView()
-
+        binding.loadingSpinner.visibility = View.VISIBLE
         lifecycleScope.launch {
+            delay(2000)
             postViewModel.posts.collect { postList ->
+                binding.loadingSpinner.visibility = View.GONE
                 if (postList.isNotEmpty()){
                     posts.clear()
+                    posts.addAll(postList)
+                    binding.homePostsRecyclerview.apply {
+                        visibility = View.VISIBLE
+                    }
+                    binding.emptyPostView.apply {
+                        visibility =View.GONE
+                    }
                 }
-                posts.addAll(postList)
+                else{
+                    binding.homePostsRecyclerview.apply {
+                        visibility = View.GONE
+                    }
+                    binding.emptyPostView.apply {
+                        visibility =View.VISIBLE
+                    }
+                }
                 postAdapter.updatePosts(posts)
-                binding.emptyPostView.visibility = if (posts.isEmpty()) View.VISIBLE else View.GONE
-                binding.homePostsRecyclerview.visibility = if (posts.isNotEmpty()) View.VISIBLE else View.GONE
             }
         }
 
@@ -93,7 +105,27 @@ class HomeFragment : Fragment() {
            }
 
            override fun onItemDeleteClick(position: Int,post: Post) {
-
+                val builder = AlertDialog.Builder(requireActivity())
+               builder.setTitle("Delete")
+                   .setMessage("Are you sure you want to delete?")
+                   .setPositiveButton("Delete"){dialog,which->
+                       dialog.dismiss()
+                       postViewModel.deletePost(post){status,message->
+                           if (status){
+                               posts.removeAt(position)
+                               postAdapter.notifyItemChanged(position)
+                               Constants.showAlert(requireActivity(),message)
+                           }
+                           else{
+                               Constants.showAlert(requireActivity(),message)
+                           }
+                       }
+                   }
+                   .setNeutralButton("Cancel"){dialog,which->
+                       dialog.dismiss()
+                   }
+               val alert = builder.create()
+               alert.show()
            }
 
            override fun onItemLikeClick(position: Int, post: Post) {

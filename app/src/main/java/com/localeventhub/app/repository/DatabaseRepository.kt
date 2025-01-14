@@ -115,6 +115,7 @@ class DatabaseRepository @Inject constructor(
 
             val loggedUser = user?.let {
                 User(
+                    userId = it["userId"] as? String ?: "",
                     name = it["name"] as? String ?: "",
                     profileImageUrl = it["profileImageUrl"] as? String ?: ""
                 )

@@ -1,5 +1,6 @@
 package com.localeventhub.app.view.fragments
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -7,9 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.localeventhub.app.R
 import com.localeventhub.app.adapters.PostAdapter.OnItemClickListener
 import com.localeventhub.app.databinding.FragmentPostDetailsBinding
@@ -136,7 +139,26 @@ class PostDetailsFragment : Fragment() {
                     })
                 }
                 R.id.menu_delete -> {
-
+                    val builder = AlertDialog.Builder(requireActivity())
+                    builder.setTitle("Delete")
+                        .setMessage("Are you sure you want to delete?")
+                        .setPositiveButton("Delete"){dialog,which->
+                            dialog.dismiss()
+                            postViewModel.deletePost(post!!){status,message->
+                                if (status){
+                                    Constants.showAlert(requireActivity(),message
+                                    ) { p0, p1 -> findNavController().popBackStack()}
+                                }
+                                else{
+                                    Constants.showAlert(requireActivity(),message)
+                                }
+                            }
+                        }
+                        .setNeutralButton("Cancel"){dialog,which->
+                            dialog.dismiss()
+                        }
+                    val alert = builder.create()
+                    alert.show()
                 }
 
             }

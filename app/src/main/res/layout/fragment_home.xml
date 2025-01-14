@@ -29,4 +29,17 @@
         android:textSize="@dimen/largeTextSize"
         />
 
+    <!-- ProgressBar (Loading Spinner) -->
+    <android.widget.ProgressBar
+        android:id="@+id/loading_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:indeterminate="true"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,14 +3,13 @@ package com.localeventhub.app.view.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ActivityMainBinding
@@ -38,9 +37,11 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_home) as NavHostFragment
 
         navController = navHostFragment.navController
-
+        setupActionBarWithNavController(navController, AppBarConfiguration(navController.graph))
         binding.bottomNavigationView.setupWithNavController(navController)
-
+        navController.addOnDestinationChangedListener { _, _, _ ->
+            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
+        }
         binding.fab.setOnClickListener {
            startActivity(Intent(context,CreatePostActivity::class.java))
         }
@@ -49,7 +50,9 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
     private fun setUpToolbar(){
         setSupportActionBar(binding.toolbar)
-       binding.toolbar.setTitleTextColor(ContextCompat.getColor(context,R.color.white))
+        binding.toolbar.apply {
+            setTitleTextColor(ContextCompat.getColor(context,R.color.white))
+        }
     }
 
     override fun navigateToFragment(fragmentId: Int, popUpId: Int) {
