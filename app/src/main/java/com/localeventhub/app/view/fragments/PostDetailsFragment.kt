@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +35,7 @@ class PostDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         binding = FragmentPostDetailsBinding.inflate(inflater, container, false)
 
 
@@ -106,13 +107,14 @@ class PostDetailsFragment : Fragment() {
                             it.setLikedByList(likedByList)
                         }
                     } else {
-                        // Show an error message
+
                     }
                 }
             }
 
             binding.postCommentView.setOnClickListener {
-
+                val bottomSheet = CommentsBottomSheetFragment(post!!.postId)
+                bottomSheet.show(childFragmentManager, "CommentsBottomSheet")
             }
         }
     }

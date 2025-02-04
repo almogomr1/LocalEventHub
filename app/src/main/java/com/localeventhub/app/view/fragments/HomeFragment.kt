@@ -31,7 +31,7 @@ class HomeFragment : Fragment() {
     private var listener: OnFragmentChangeListener? = null
 
     private val postViewModel: PostViewModel by viewModels()
-    private lateinit var postAdapter: PostAdapter // Assume you have a RecyclerView adapter
+    private lateinit var postAdapter: PostAdapter
     private var posts = mutableListOf<Post>()
 
     override fun onAttach(context: Context) {
@@ -144,13 +144,14 @@ class HomeFragment : Fragment() {
                        posts.add(position,post)
                        postAdapter.notifyItemChanged(position)
                    } else {
-                       // Show an error message
+
                    }
                }
            }
 
            override fun onItemCommentClick(position: Int, post: Post) {
-
+               val bottomSheet = CommentsBottomSheetFragment(post.postId)
+               bottomSheet.show(childFragmentManager, "CommentsBottomSheet")
            }
 
        })

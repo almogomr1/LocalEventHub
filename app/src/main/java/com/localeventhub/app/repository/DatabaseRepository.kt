@@ -1,8 +1,10 @@
 package com.localeventhub.app.repository
 
+import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import com.localeventhub.app.model.Comment
 import com.localeventhub.app.model.EventLocation
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.model.User
@@ -139,5 +141,62 @@ class DatabaseRepository @Inject constructor(
         }
     }
 
+    fun addComment(comment: Comment, callback: (Boolean, String) -> Unit) {
+        val commentRef = firestore.collection("COMMENTS").document(comment.commentId)
+        commentRef.set(comment)
+            .addOnSuccessListener {
+                CoroutineScope(ioDispatcher).launch {
+                    commentDao.insertComment(comment) // Save comment locally
+                }
+                callback(true, "Comment added successfully")
+            }
+            .addOnFailureListener { e ->
+                callback(false, "Error adding comment: ${e.message}")
+            }
+    }
 
+    fun deleteComment(commentId: String, callback: (Boolean, String) -> Unit) {
+        firestore.collection("COMMENTS").document(commentId)
+            .delete()
+            .addOnSuccessListener {
+                CoroutineScope(ioDispatcher).launch {
+                    commentDao.deleteCommentById(commentId) // Delete comment locally
+                }
+                callback(true, "Comment deleted successfully")
+            }
+            .addOnFailureListener { e ->
+                callback(false, "Error deleting comment: ${e.message}")
+            }
+    }
+
+    suspend fun syncCommentsForPost(postId: String) {
+        val comments = firestore.collection("COMMENTS")
+            .whereEqualTo("postId", postId)
+            .get()
+            .await()
+            .documents.mapNotNull { it.toComment() }
+
+        CoroutineScope(ioDispatcher).launch {
+            commentDao.insertComments(comments)
+        }
+    }
+
+    private fun DocumentSnapshot.toComment(): Comment? {
+        return try {
+            Comment(
+                commentId = getString("commentId") ?: "",
+                postId = getString("postId") ?: "",
+                userId = getString("userId") ?: "",
+                content = getString("content") ?: "",
+                timestamp = getLong("timestamp") ?: 0L
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun getCommentsForPost(postId: String): LiveData<List<Comment>> {
+        return commentDao.getCommentsForPost(postId)
+    }
 }

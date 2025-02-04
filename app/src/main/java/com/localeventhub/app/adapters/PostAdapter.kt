@@ -102,19 +102,17 @@ class PostAdapter(private val posts: MutableList<Post>) :
                 }
 
                 binding.postMoreOption.setOnClickListener { view ->
-                    showPopupMenu(view, post, mListener)
-//                    mListener.onItemMoreClick(layoutPosition,binding.postMoreOption)
+                    showPopupMenu(view, post)
                 }
 
                 postDescription.text = post.description
             }
         }
 
-        private fun showPopupMenu(view: View, item: Post, listener: OnItemClickListener) {
+        private fun showPopupMenu(view: View, item: Post) {
             val popupMenu = PopupMenu(view.context, view)
             popupMenu.menuInflater.inflate(R.menu.post_pop_up_menu, popupMenu.menu)
 
-            // Hide "Edit" and "Delete" options based on the condition
             if (item.user?.userId != Constants.loggedUserId) {
                 popupMenu.menu.findItem(R.id.menu_edit).isVisible = false
                 popupMenu.menu.findItem(R.id.menu_delete).isVisible = false

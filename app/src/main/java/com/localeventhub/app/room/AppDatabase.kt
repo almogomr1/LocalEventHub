@@ -17,7 +17,6 @@ abstract class AppDatabase : RoomDatabase() {
     companion object{
         val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Add the new column with a default value
                 database.execSQL("ALTER TABLE posts ADD COLUMN likedBy TEXT NOT NULL DEFAULT '[]'")
             }
         }

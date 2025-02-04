@@ -55,7 +55,6 @@ class FirebaseRepositoryImpl @Inject constructor(
                 } else {
                     val errorMessage = when (val exception = task.exception) {
                         is FirebaseAuthException -> {
-                            // Map error codes to custom messages
                             when (exception.errorCode) {
                                 "ERROR_INVALID_EMAIL" -> "The email address is badly formatted."
                                 "ERROR_USER_NOT_FOUND" -> "No account found for this email. Please sign up first."
@@ -78,7 +77,6 @@ class FirebaseRepositoryImpl @Inject constructor(
             if (success) {
                 user.profileImageUrl = downloadUrl
                 usersRef.document(userId).set(user)
-                println("Image uploaded successfully. URL: $downloadUrl")
             } else {
                 println("Failed to upload image: $downloadUrl")
             }
@@ -135,7 +133,6 @@ class FirebaseRepositoryImpl @Inject constructor(
                     val user = document.toObject(User::class.java)
                     if (user != null) {
                         Constants.loggedUser = user
-                        Log.d("LOGGED_USER", user.toString())
                     }
                 }
             }

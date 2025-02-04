@@ -249,9 +249,6 @@ class CreatePostActivity : AppCompatActivity() {
                 for (location in locationResult.locations) {
                     val latitude = location.latitude
                     val longitude = location.longitude
-
-//                    Toast.makeText(context, "Lat: $latitude, Lon: $longitude", Toast.LENGTH_SHORT)
-//                        .show()
                 }
             }
         }

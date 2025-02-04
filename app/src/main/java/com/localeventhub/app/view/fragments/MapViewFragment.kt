@@ -87,10 +87,8 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
             location?.let {
                 val currentLatLng = LatLng(it.latitude, it.longitude)
 
-                // Add marker to current location
                 googleMap.addMarker(MarkerOptions().position(currentLatLng).title("You are here"))
 
-                // Move camera to current location
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
             }
         }

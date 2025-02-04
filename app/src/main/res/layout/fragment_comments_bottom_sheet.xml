@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.fragments.CommentsBottomSheetFragment">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/comments_heading"
+        android:text="@string/comments"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="@dimen/mediumTextSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/eightDpMargin"
+        android:layout_marginBottom="@dimen/eightDpMargin"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvComments"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/comments_heading"
+        app:layout_constraintBottom_toTopOf="@id/comment_input_wrapper"
+        android:layout_weight="1"
+        android:layout_margin="@dimen/defaultDpMargin"
+        android:scrollbars="vertical" />
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rvComments"
+        android:id="@+id/comment_input_wrapper"
+        android:gravity="center_vertical"
+        android:layout_margin="@dimen/defaultDpMargin"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/comment_input_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/defaultDpMargin"
+            android:background="@drawable/text_input_box_design"
+            android:hint="@string/write_a_comment"
+            android:inputType="textMultiLine"
+            android:textColor="@color/black"
+            android:maxLines="2"
+            android:textColorHint="@color/black"
+            android:textSize="@dimen/smallTextSize" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:layout_marginStart="@dimen/defaultDpMargin"
+            android:text="@string/send" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

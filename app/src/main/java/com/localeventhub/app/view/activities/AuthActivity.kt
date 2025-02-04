@@ -23,9 +23,9 @@ class AuthActivity : AppCompatActivity(), OnFragmentChangeListener {
         setContentView(binding.root)
         context = this
 
-        // Obtain reference to the NavHostFragment
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
-        // Get the NavController
+
         navController = navHostFragment.navController
 
     }
@@ -35,15 +35,6 @@ class AuthActivity : AppCompatActivity(), OnFragmentChangeListener {
     }
 
     override fun navigateToFragment(fragmentId: Int, popUpId: Int) {
-//        if (popUpId == 0){
             navController!!.navigate(fragmentId)
-//        }
-//        else{
-//            navController!!.navigate(fragmentId){
-//                popUpTo(popUpId){
-//                    inclusive = false
-//                }
-//            }
-//        }
     }
 }

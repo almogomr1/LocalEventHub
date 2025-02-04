@@ -1,11 +1,13 @@
 package com.localeventhub.app.viewmodel
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.localeventhub.app.firebase.FirebaseRepository
+import com.localeventhub.app.model.Comment
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.repository.DatabaseRepository
 import com.localeventhub.app.utils.Constants
@@ -98,6 +100,28 @@ class PostViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun addComment(comment: Comment, callback: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            database.addComment(comment, callback)
+        }
+    }
+
+    fun deleteComment(commentId: String, callback: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            database.deleteComment(commentId, callback)
+        }
+    }
+
+    fun loadCommentsForPost(postId: String) {
+        viewModelScope.launch {
+            database.syncCommentsForPost(postId)
+        }
+    }
+
+    fun getCommentsForPost(postId: String): LiveData<List<Comment>> {
+        return database.getCommentsForPost(postId)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.localeventhub.app.model
 
 import androidx.room.*
+import com.localeventhub.app.utils.Constants
 import java.io.Serializable
 
 @Entity(
@@ -17,7 +18,8 @@ data class Comment(
     @ColumnInfo(name = "post_id", index = true) val postId: String,      // Foreign Key to Post
     @ColumnInfo(name = "user_id") val userId: String,                   // Commenter's user ID
     val content: String,                                               // Comment content
-    val timestamp: Long                                                // Timestamp
+    val timestamp: Long,
+    @Embedded val user: User? = Constants.loggedUser,// Timestamp
 ):Serializable{
     constructor():this("","","","",0)
 }

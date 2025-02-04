@@ -188,14 +188,6 @@ class UpdatePostActivity : AppCompatActivity() {
         return true
     }
 
-//    private fun resetViews(){
-//        binding.description.setText("")
-//        binding.tags.setText("")
-//        binding.location.setText("")
-//        selectedImageUri = null
-//        eventLocation = null
-//    }
-
     private fun setUpToolbar() {
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setTitle(getString(R.string.create_post))
@@ -280,9 +272,6 @@ class UpdatePostActivity : AppCompatActivity() {
                 for (location in locationResult.locations) {
                     val latitude = location.latitude
                     val longitude = location.longitude
-
-//                    Toast.makeText(context, "Lat: $latitude, Lon: $longitude", Toast.LENGTH_SHORT)
-//                        .show()
                 }
             }
         }
