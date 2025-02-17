@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
            startActivity(Intent(context,CreatePostActivity::class.java))
         }
 
+
     }
 
     private fun setUpToolbar(){

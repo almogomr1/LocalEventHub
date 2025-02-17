@@ -18,6 +18,10 @@
         <action
             android:id="@+id/action_home_to_profile"
             app:destination="@id/profileFragment" />
+
+        <action
+            android:id="@+id/action_home_to_notifications"
+            app:destination="@id/notificationsFragment" />
     </fragment>
 
     <fragment
@@ -35,6 +39,12 @@
         android:name="com.localeventhub.app.view.fragments.PostDetailsFragment"
         android:label="Post Details"
         tools:layout="@layout/fragment_post_details" />
+
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.localeventhub.app.view.fragments.NotificationsFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/profileFragment"

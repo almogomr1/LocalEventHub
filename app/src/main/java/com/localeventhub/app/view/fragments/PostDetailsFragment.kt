@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.localeventhub.app.R
 import com.localeventhub.app.adapters.PostAdapter.OnItemClickListener
 import com.localeventhub.app.databinding.FragmentPostDetailsBinding
+import com.localeventhub.app.model.Notification
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.utils.ExifTransformation
@@ -24,6 +25,7 @@ import com.localeventhub.app.view.activities.UpdatePostActivity
 import com.localeventhub.app.viewmodel.PostViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 
 @AndroidEntryPoint
 class PostDetailsFragment : Fragment() {
@@ -102,7 +104,7 @@ class PostDetailsFragment : Fragment() {
                                     setTypeface(null, Typeface.BOLD)
                                     setTextColor(ContextCompat.getColor(context, R.color.primary))
                                 }
-
+                                saveNotification(post!!)
                             }
                             it.setLikedByList(likedByList)
                         }
@@ -113,7 +115,7 @@ class PostDetailsFragment : Fragment() {
             }
 
             binding.postCommentView.setOnClickListener {
-                val bottomSheet = CommentsBottomSheetFragment(post!!.postId)
+                val bottomSheet = CommentsBottomSheetFragment(post!!)
                 bottomSheet.show(childFragmentManager, "CommentsBottomSheet")
             }
         }
@@ -168,6 +170,20 @@ class PostDetailsFragment : Fragment() {
         }
 
         popupMenu.show()
+    }
+
+    private fun saveNotification(post: Post) {
+        val notification = Notification(
+            id = UUID.randomUUID().toString(),
+            postId = post.postId,
+            type = "like",
+            senderId = Constants.loggedUserId,
+            receiverId = post.user!!.userId,
+            message = "${Constants.loggedUser?.name} liked your post.",
+            timestamp = System.currentTimeMillis()
+        )
+
+        postViewModel.saveNotification(notification)
     }
 
 }

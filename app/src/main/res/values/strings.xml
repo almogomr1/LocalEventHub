@@ -38,4 +38,6 @@
     <string name="delete_comment">Delete Comment</string>
     <string name="comments">comments</string>
     <string name="search">Search</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_empty_message">There is no notification yet!</string>
 </resources>

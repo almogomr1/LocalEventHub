@@ -3,28 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.fragments.HomeFragment">
+    android:background="@color/light_gray"
+    tools:context=".view.fragments.NotificationsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/defaultDpMargin"
-        android:id="@+id/home_posts_recyclerview"
+        android:id="@+id/notifications_recyclerview"
+        tools:listitem="@layout/item_notification"
         android:visibility="gone"
         />
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/empty_post_view"
+        android:id="@+id/empty_notification_view"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/post_empty_message"
+        android:text="@string/notification_empty_message"
         android:textColor="@color/dark_gray"
         android:textSize="@dimen/largeTextSize"
         />

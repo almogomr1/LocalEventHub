@@ -14,6 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.localeventhub.app.adapters.CommentsAdapter
 import com.localeventhub.app.databinding.FragmentCommentsBottomSheetBinding
 import com.localeventhub.app.model.Comment
+import com.localeventhub.app.model.Notification
+import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +24,7 @@ import java.util.UUID
 
 @AndroidEntryPoint
 class CommentsBottomSheetFragment(
-    private val postId: String
+    private val post: Post
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding:FragmentCommentsBottomSheetBinding
@@ -31,7 +33,7 @@ class CommentsBottomSheetFragment(
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        postViewModel.loadCommentsForPost(postId)
+        postViewModel.loadCommentsForPost(post.postId)
     }
 
     override fun onCreateView(
@@ -52,7 +54,7 @@ class CommentsBottomSheetFragment(
         binding.rvComments.layoutManager = LinearLayoutManager(requireContext())
 
 
-        postViewModel.getCommentsForPost(postId).observe(viewLifecycleOwner) { comments ->
+        postViewModel.getCommentsForPost(post.postId).observe(viewLifecycleOwner) { comments ->
 
             commentsAdapter.submitList(comments)
         }
@@ -106,16 +108,31 @@ class CommentsBottomSheetFragment(
     private fun addComment(commentText: String) {
         val newComment = Comment(
             commentId = UUID.randomUUID().toString(),
-            postId = postId,
+            postId = post.postId,
             userId = Constants.loggedUserId,
             content = commentText,
             timestamp = System.currentTimeMillis()
         )
         postViewModel.addComment(newComment) { success, message ->
             if (success) {
+                saveNotification(post)
             } else {
             }
         }
+    }
+
+    private fun saveNotification(post: Post) {
+        val notification = Notification(
+            id = UUID.randomUUID().toString(),
+            postId = post.postId,
+            type = "comment",
+            senderId = Constants.loggedUserId,
+            receiverId = post.user!!.userId,
+            message = "${Constants.loggedUser?.name} commented on your post.",
+            timestamp = System.currentTimeMillis()
+        )
+
+        postViewModel.saveNotification(notification)
     }
 
 }

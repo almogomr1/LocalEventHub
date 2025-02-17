@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.localeventhub.app.firebase.FirebaseRepository
 import com.localeventhub.app.model.Comment
+import com.localeventhub.app.model.Notification
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.repository.DatabaseRepository
 import com.localeventhub.app.utils.Constants
@@ -27,6 +28,9 @@ class PostViewModel @Inject constructor(
 
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts: StateFlow<List<Post>> get() = _posts
+
+    private val _notifications = MutableStateFlow<List<Notification>>(emptyList())
+    val notifications: StateFlow<List<Notification>> get() = _notifications
 
     private val allPosts = mutableListOf<Post>()
 
@@ -131,12 +135,38 @@ class PostViewModel @Inject constructor(
         return database.getCommentsForPost(postId)
     }
 
+    fun loadNotifications(isOnline: Boolean,receiverId: String) {
+        viewModelScope.launch {
+            if (isOnline) {
+                database.syncNotificationsFromFireStore(receiverId)
+            }
+            _notifications.value =  database.getAllNotifications()
+
+        }
+    }
+
+    fun getAllNotifications(): List<Notification> {
+        return database.getAllNotifications()
+    }
+
+    fun saveNotification(notification: Notification) {
+        viewModelScope.launch {
+            database.insertNotification(notification) // Save to Room
+            database.saveNotificationToFireStore(notification) { success ->
+                if (!success) {
+                    Log.e("Notification", "Failed to save notification to Firestore")
+                }
+            }
+        }
+    }
+
+    fun syncNotifications(receiverId: String) {
+        database.syncNotificationsFromFireStore(receiverId)
+    }
+
     fun searchPostsByTag(query: String) {
-        Log.d("PostViewModel", "searchPostsByTag called with query=$query")
-        Log.d("PostViewModel", "All posts size: ${allPosts.size}")
         if (allPosts.isEmpty()) {
-            Log.d("PostViewModel", "No posts available in allPosts")
-            return // No posts available to search
+            return
         }
         _posts.value = if (query.isEmpty()) {
             allPosts

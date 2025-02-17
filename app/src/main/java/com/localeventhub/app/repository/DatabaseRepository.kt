@@ -3,12 +3,15 @@ package com.localeventhub.app.repository
 import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.gson.Gson
 import com.localeventhub.app.model.Comment
 import com.localeventhub.app.model.EventLocation
+import com.localeventhub.app.model.Notification
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.model.User
 import com.localeventhub.app.room.CommentDao
+import com.localeventhub.app.room.NotificationDao
 import com.localeventhub.app.room.PostDao
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +24,7 @@ class DatabaseRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val postDao: PostDao,
     private val commentDao: CommentDao,
+    private val notificationDao: NotificationDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
@@ -198,5 +202,34 @@ class DatabaseRepository @Inject constructor(
 
     fun getCommentsForPost(postId: String): LiveData<List<Comment>> {
         return commentDao.getCommentsForPost(postId)
+    }
+
+    fun getAllNotifications(): List<Notification> {
+        return notificationDao.getAllNotifications()
+    }
+
+    suspend fun insertNotification(notification: Notification) {
+        notificationDao.insertNotification(notification)
+    }
+
+    fun saveNotificationToFireStore(notification: Notification, onComplete: (Boolean) -> Unit) {
+        firestore.collection("NOTIFICATIONS")
+            .document(notification.id)
+            .set(notification)
+            .addOnSuccessListener { onComplete(true) }
+            .addOnFailureListener { onComplete(false) }
+    }
+
+    fun syncNotificationsFromFireStore(receiverId: String) {
+        firestore.collection("NOTIFICATIONS")
+            .whereEqualTo("receiverId", receiverId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                val notifications = result.toObjects(Notification::class.java)
+                CoroutineScope(Dispatchers.IO).launch {
+                    notificationDao.insertNotifications(notifications)
+                }
+            }
     }
 }

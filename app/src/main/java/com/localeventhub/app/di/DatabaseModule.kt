@@ -7,6 +7,7 @@ import com.localeventhub.app.repository.DatabaseRepository
 import com.localeventhub.app.room.PostDao
 import com.localeventhub.app.room.AppDatabase
 import com.localeventhub.app.room.CommentDao
+import com.localeventhub.app.room.NotificationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +26,9 @@ object DatabaseModule {
     fun provideCommentDao(appDatabase: AppDatabase): CommentDao = appDatabase.commentDao()
 
     @Provides
+    fun provideNotificationDao(appDatabase: AppDatabase): NotificationDao = appDatabase.notificationDao()
+
+    @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(
@@ -33,9 +37,9 @@ object DatabaseModule {
             "local_event_hub_database"
         )
             .allowMainThreadQueries()
-            .addMigrations(AppDatabase.MIGRATION_6_7)
+//            .addMigrations(AppDatabase.MIGRATION_6_7)
             .build()
 
     @Provides
-    fun provideDatabaseRepository(firestore: FirebaseFirestore, postDao: PostDao, commentDao: CommentDao): DatabaseRepository = DatabaseRepository(firestore,postDao,commentDao)
+    fun provideDatabaseRepository(firestore: FirebaseFirestore, postDao: PostDao, commentDao: CommentDao,notificationDao: NotificationDao): DatabaseRepository = DatabaseRepository(firestore,postDao,commentDao,notificationDao)
 }

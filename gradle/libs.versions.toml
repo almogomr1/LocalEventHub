@@ -3,6 +3,7 @@ agp = "8.6.1"
 circleimageview = "3.1.0"
 exifinterface = "1.3.7"
 firebaseBom = "33.7.0"
+firebaseInappmessaging = "21.0.1"
 googlePlayServicesPlaces = "18.0.0"
 gson = "2.11.0"
 hilt = "2.49"
@@ -42,6 +43,7 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-inappmessaging = { module = "com.google.firebase:firebase-inappmessaging", version.ref = "firebaseInappmessaging" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
 google-play-services-places = { module = "com.google.android.gms:play-services-places", version.ref = "googlePlayServicesPlaces" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

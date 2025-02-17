@@ -105,4 +105,5 @@ class AuthViewModel @Inject constructor(
         firebaseRepository.logout()
     }
 
+
 }

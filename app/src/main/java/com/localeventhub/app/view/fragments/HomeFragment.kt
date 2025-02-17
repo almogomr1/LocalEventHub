@@ -21,6 +21,7 @@ import com.localeventhub.app.R
 import com.localeventhub.app.adapters.PostAdapter
 import com.localeventhub.app.databinding.FragmentHomeBinding
 import com.localeventhub.app.interfaces.OnFragmentChangeListener
+import com.localeventhub.app.model.Notification
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.view.activities.MainActivity
@@ -30,6 +31,7 @@ import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -67,14 +69,10 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         binding.loadingSpinner.visibility = View.VISIBLE
         lifecycleScope.launch {
-            delay(2000)
+            delay(1000)
             postViewModel.posts.collect { postList ->
                 if (postList.isNotEmpty()) {
                     binding.loadingSpinner.visibility = View.GONE
-                } else {
-                    binding.loadingSpinner.visibility = View.VISIBLE
-                }
-                if (postList.isNotEmpty()) {
                     posts.clear()
                     posts.addAll(postList)
                     binding.homePostsRecyclerview.apply {
@@ -84,6 +82,7 @@ class HomeFragment : Fragment() {
                         visibility = View.GONE
                     }
                 } else {
+                    binding.loadingSpinner.visibility = View.GONE
                     binding.homePostsRecyclerview.apply {
                         visibility = View.GONE
                     }
@@ -191,6 +190,7 @@ class HomeFragment : Fragment() {
                                 likedByList.remove(Constants.loggedUserId)
                             } else {
                                 likedByList.add(Constants.loggedUserId)
+                                saveNotification(post)
                             }
                             it.setLikedByList(likedByList)
                         }
@@ -204,11 +204,25 @@ class HomeFragment : Fragment() {
             }
 
             override fun onItemCommentClick(position: Int, post: Post) {
-                val bottomSheet = CommentsBottomSheetFragment(post.postId)
+                val bottomSheet = CommentsBottomSheetFragment(post)
                 bottomSheet.show(childFragmentManager, "CommentsBottomSheet")
             }
 
         })
+    }
+
+    private fun saveNotification(post: Post) {
+        val notification = Notification(
+            id = UUID.randomUUID().toString(),
+            postId = post.postId,
+            type = "like",
+            senderId = Constants.loggedUserId,
+            receiverId = post.user!!.userId,
+            message = "${Constants.loggedUser?.name} liked your post.",
+            timestamp = System.currentTimeMillis()
+        )
+
+        postViewModel.saveNotification(notification)
     }
 
 
