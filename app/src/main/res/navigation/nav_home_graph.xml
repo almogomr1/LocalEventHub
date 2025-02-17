@@ -24,7 +24,11 @@
         android:id="@+id/mapViewFragment"
         android:name="com.localeventhub.app.view.fragments.MapViewFragment"
         android:label="Map View"
-        tools:layout="@layout/fragment_map_view" />
+        tools:layout="@layout/fragment_map_view" >
+        <action
+            android:id="@+id/action_mapView_to_postDetails"
+            app:destination="@id/postDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/postDetailsFragment"

@@ -1,6 +1,7 @@
 package com.localeventhub.app.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,7 @@ class PostViewModel @Inject constructor(
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts: StateFlow<List<Post>> get() = _posts
 
+    private val allPosts = mutableListOf<Post>()
 
     fun getPostId(): String {
         return database.getPostId()
@@ -53,7 +55,12 @@ class PostViewModel @Inject constructor(
             if (isOnline) {
                 database.syncPostsFromFireStore()
             }
-            _posts.value = database.getCachedPosts()
+            val cachedPosts = database.getCachedPosts()
+            if (cachedPosts.isNotEmpty()) {
+                allPosts.clear()
+                allPosts.addAll(cachedPosts)
+            }
+            _posts.value = allPosts.toList()
         }
     }
 
@@ -122,6 +129,22 @@ class PostViewModel @Inject constructor(
 
     fun getCommentsForPost(postId: String): LiveData<List<Comment>> {
         return database.getCommentsForPost(postId)
+    }
+
+    fun searchPostsByTag(query: String) {
+        Log.d("PostViewModel", "searchPostsByTag called with query=$query")
+        Log.d("PostViewModel", "All posts size: ${allPosts.size}")
+        if (allPosts.isEmpty()) {
+            Log.d("PostViewModel", "No posts available in allPosts")
+            return // No posts available to search
+        }
+        _posts.value = if (query.isEmpty()) {
+            allPosts
+        } else {
+            allPosts.filter { post ->
+                post.tags.any { tag -> tag.contains(query, ignoreCase = true) }
+            }
+        }
     }
 
 }

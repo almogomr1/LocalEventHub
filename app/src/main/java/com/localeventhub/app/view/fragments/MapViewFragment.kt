@@ -5,14 +5,16 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,7 +25,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.FragmentMapViewBinding
+import com.localeventhub.app.model.Post
+import com.localeventhub.app.utils.Constants
+import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MapViewFragment : Fragment(), OnMapReadyCallback {
@@ -31,6 +38,8 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
     private lateinit var binding:FragmentMapViewBinding
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val postViewModel: PostViewModel by viewModels()
+    private var posts = mutableListOf<Post>()
 
 
     private val requestPermissionLauncher =
@@ -48,13 +57,58 @@ class MapViewFragment : Fragment(), OnMapReadyCallback {
     ): View? {
         binding = FragmentMapViewBinding.inflate(inflater, container, false)
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        postViewModel.loadPosts(Constants.isOnline(requireActivity()))
+        viewLifecycleOwner.lifecycleScope.launch {
+            postViewModel.posts.collect { postList ->
+                if (postList.isNotEmpty()){
+                    posts.clear()
+                    posts.addAll(postList)
+                    delay(2000)
+                    if (isAdded) { // Ensure the fragment is attached
+                        showMarkersOnMap()
+                    }
+                }
+            }
+        }
 
+    }
 
-        return binding.root
+    private fun showMarkersOnMap() {
+        if (posts.isNotEmpty()) {
+            if(isAdded){
+                requireActivity().runOnUiThread {
+                    for (post in posts) {
+                        val latLng = LatLng(post.location!!.latitude, post.location!!.longitude)
+                        val marker = googleMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .title("Event at ${post.location!!.latitude}, ${post.location!!.longitude}")
+                        )
+                        marker?.tag = post
+                    }
+
+                    googleMap.setOnMarkerClickListener { marker ->
+                        val post = marker.tag as? Post
+                        if (post != null) {
+                            val bundle = Bundle().apply {
+                                putSerializable("post", post)
+                            }
+                            findNavController().navigate(R.id.action_mapView_to_postDetails, bundle)
+                        }
+                        true
+                    }
+                }
+            }
+        }
     }
 
     override fun onMapReady(map: GoogleMap) {

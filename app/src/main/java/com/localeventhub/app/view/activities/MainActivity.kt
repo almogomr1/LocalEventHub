@@ -3,6 +3,7 @@ package com.localeventhub.app.view.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,13 +18,20 @@ import com.localeventhub.app.interfaces.OnFragmentChangeListener
 import com.localeventhub.app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
-    private lateinit var binding:ActivityMainBinding
+
     private lateinit var context: Context
     private val authViewModel: AuthViewModel by viewModels()
     private lateinit var navController: NavController
+
+
+    companion object{
+         lateinit var binding:ActivityMainBinding
+         var mainMenu:Menu?=null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +47,8 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
         navController = navHostFragment.navController
         setupActionBarWithNavController(navController, AppBarConfiguration(navController.graph))
         binding.bottomNavigationView.setupWithNavController(navController)
-        navController.addOnDestinationChangedListener { _, _, _ ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            mainMenu?.findItem(R.id.action_search)?.isVisible = destination.id == R.id.homeFragment
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
         }
         binding.fab.setOnClickListener {
