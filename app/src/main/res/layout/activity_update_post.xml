@@ -83,11 +83,14 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/description"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
+                android:maxHeight="120dp"
                 android:background="@drawable/text_input_box_design"
                 android:layout_marginTop="@dimen/sixtyDpMargin"
                 android:gravity="start"
                 android:hint="@string/description"
+                android:overScrollMode="always"
+                android:scrollbars="vertical"
                 android:inputType="textMultiLine"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
@@ -112,6 +115,31 @@
                 android:imeOptions="actionDone"
                 android:textColorHint="@color/black"
                 android:textSize="@dimen/mediumTextSize" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/sixtyDpMargin"
+                android:id="@+id/suggestion_tags_wrapper"
+                android:visibility="gone"
+                >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ai_tags_and_categories_suggestion"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/xSmallTextSize"
+                    />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/defaultDpMargin"
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"

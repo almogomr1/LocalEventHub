@@ -40,4 +40,5 @@
     <string name="search">Search</string>
     <string name="notifications">Notifications</string>
     <string name="notification_empty_message">There is no notification yet!</string>
+    <string name="ai_tags_and_categories_suggestion">AI Tags and Categories Suggestion</string>
 </resources>

@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -19,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -31,6 +34,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.chip.Chip
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ActivityUpdatePostBinding
 import com.localeventhub.app.model.EventLocation
@@ -40,6 +44,7 @@ import com.localeventhub.app.utils.ExifTransformation
 import com.localeventhub.app.viewmodel.PostViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UpdatePostActivity : AppCompatActivity() {
@@ -121,6 +126,15 @@ class UpdatePostActivity : AppCompatActivity() {
             }
         }
 
+        binding.description.setOnTouchListener { view, event ->
+            view.parent.requestDisallowInterceptTouchEvent(true)
+            if (event.action == android.view.MotionEvent.ACTION_UP) {
+                view.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            false
+        }
+
+
         binding.updateBtn.setOnClickListener {
 
             val description = binding.description.text.toString()
@@ -169,6 +183,70 @@ class UpdatePostActivity : AppCompatActivity() {
                 }
             }
 
+        }
+
+        binding.tags.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                loadAiTagsCategories(binding.description.text.toString().trim())
+            }
+        }
+    }
+
+    private fun loadAiTagsCategories(description: String){
+
+        val prompt = """
+            Generate a list of relevant tags and categories for the following description text. Tags should be concise and cover keywords, topics, and entities mentioned in the text. Categories should be broader and represent the overall themes or topics of the description. Provide the output as:
+            - Tags: A comma-separated list of keywords.
+            - Categories: A comma-separated of category.
+            
+            Description:
+            $description
+            
+            Output format:
+            - Tags: [List of tags]
+            - Categories: [List of categories]
+        """.trimIndent()
+
+        lifecycleScope.launch {
+            postViewModel.callAiRecommendationRequest(prompt) { result ->
+                val tags = result.substringAfter("Tags:").substringBefore("Categories:").trim().split(",").map { it.trim() }
+                val categories = result.substringAfter("Categories:").trim()
+                    .split(",").map { it.trim() }
+                val tagsCategoriesList = mutableListOf<String>()
+                tagsCategoriesList.addAll(tags)
+                tagsCategoriesList.addAll(categories)
+                displaySuggestedCategories(tagsCategoriesList)
+            }
+        }
+    }
+
+    private fun displaySuggestedCategories(categories: List<String>) {
+        if (categories.isNotEmpty()){
+            binding.suggestionTagsWrapper.visibility = View.VISIBLE
+        }
+        else{
+            binding.suggestionTagsWrapper.visibility = View.GONE
+        }
+        binding.chipGroup.removeAllViews()
+        categories.forEach { category ->
+            val chip = Chip(this).apply {
+                text = category
+                isCheckable = false
+                isClickable = true
+
+                setOnClickListener {
+                    // Append the chip's text to the EditText
+                    val currentText = binding.tags.text.toString()
+                    val updatedText = if (currentText.isEmpty()) {
+                        text.toString()
+                    } else {
+                        "$currentText, ${text}"
+                    }
+                    binding.tags.setText(updatedText)
+                    binding.tags.setSelection(updatedText.length) // Move cursor to the end
+                }
+            }
+            binding.chipGroup.addView(chip)
         }
     }
 

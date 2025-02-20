@@ -5,6 +5,7 @@
     <dimen name="largePadding">16dp</dimen>
     <dimen name="xlargePadding">20dp</dimen>
 
+    <dimen name="xSmallTextSize">12sp</dimen>
     <dimen name="smallTextSize">14sp</dimen>
     <dimen name="mediumTextSize">18sp</dimen>
     <dimen name="largeTextSize">22sp</dimen>

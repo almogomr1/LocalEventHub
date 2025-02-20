@@ -8,15 +8,19 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.localeventhub.app.firebase.FirebaseRepository
+import com.localeventhub.app.model.ChatGptRequest
 import com.localeventhub.app.model.Comment
+import com.localeventhub.app.model.Message
 import com.localeventhub.app.model.Notification
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.repository.DatabaseRepository
-import com.localeventhub.app.utils.Constants
+import com.localeventhub.app.retrofit.ChatGptApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.UUID
 import javax.inject.Inject
 
@@ -176,5 +180,47 @@ class PostViewModel @Inject constructor(
             }
         }
     }
+
+
+    suspend fun callAiRecommendationRequest(prompt: String,callback:(String)->Unit){
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.openai.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val chatGptApi = retrofit.create(ChatGptApi::class.java)
+
+        viewModelScope.launch {
+            val apiKey = ""
+
+            val recommendations = getChatGptRecommendations(apiKey, prompt,chatGptApi)
+
+            recommendations?.let {
+                println(it)
+                callback(it)
+            } ?: run {
+                callback("Failed to get recommendations")
+            }
+
+        }
+    }
+
+    private suspend fun getChatGptRecommendations(apiKey: String, userInput: String, chatGptApi: ChatGptApi): String? {
+        val request = ChatGptRequest(
+            model = "gpt-3.5-turbo", // Use the appropriate model name
+            messages = listOf(
+                Message(role = "user", content = userInput)
+            )
+        )
+
+        val response = chatGptApi.getRecommendations("Bearer $apiKey", request)
+
+        return if (response.isSuccessful) {
+            response.body()?.choices?.firstOrNull()?.message?.content
+        } else {
+            // Handle the error
+            null
+        }
+    }
+
 
 }

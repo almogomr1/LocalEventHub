@@ -18,11 +18,16 @@ android {
         versionName = "1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a","arm64-v8a"))
+        }
     }
 
     buildFeatures{
         viewBinding = true
     }
+
 
     buildTypes {
         release {
@@ -37,9 +42,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    ndkVersion = "25.1.8937393"
 }
 
 dependencies {
@@ -102,4 +109,8 @@ dependencies {
 
     // GSON
     implementation(libs.gson)
+
+    // RETROFIT
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }
