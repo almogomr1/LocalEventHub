@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.localeventhub.app.firebase.FirebaseRepository
 import com.localeventhub.app.model.User
-import com.localeventhub.app.utils.ValidationUtil
+import com.localeventhub.app.utils.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,8 +14,8 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel(){
 
     fun validateAndLogin(email: String, password: String, callback: (Boolean, String?) -> Unit) {
-        val isEmailValid = ValidationUtil.isEmailValid(email)
-        val isPasswordValid = ValidationUtil.isPasswordValid(password)
+        val isEmailValid = Validation.isEmailValid(email)
+        val isPasswordValid = Validation.isPasswordValid(password)
 
         if (isEmailValid && isPasswordValid) {
             signIn(email, password, callback)
@@ -41,9 +41,9 @@ class AuthViewModel @Inject constructor(
         val isImageUri = imageUri == null
         val isNameEmpty = name.isBlank()
         val isEmailEmpty = email.isBlank()
-        val isEmailValid = ValidationUtil.isEmailValid(email)
+        val isEmailValid = Validation.isEmailValid(email)
         val isPasswordEmpty = password.isBlank()
-        val isPasswordValid = ValidationUtil.isPasswordValid(password)
+        val isPasswordValid = Validation.isPasswordValid(password)
         val isConfirmPasswordEmpty = confirmPassword.isBlank()
         val isBothPasswordsSame = password.lowercase() == confirmPassword.lowercase()
 

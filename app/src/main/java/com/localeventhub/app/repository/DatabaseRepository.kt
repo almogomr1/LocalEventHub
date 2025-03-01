@@ -115,7 +115,7 @@ class DatabaseRepository @Inject constructor(
                 EventLocation(
                     it["latitude"] as? Double ?: 0.0,
                     it["longitude"] as? Double ?: 0.0,
-                    it["name"] as? String ?: ""
+                    it["address"] as? String ?: ""
                 )
             }
 

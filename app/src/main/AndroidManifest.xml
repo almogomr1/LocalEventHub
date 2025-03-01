@@ -30,10 +30,10 @@
 
 
         <activity
-            android:name=".view.activities.UpdatePostActivity"
+            android:name=".view.activities.UpdatePost"
             android:exported="false" />
         <activity
-            android:name=".view.activities.CreatePostActivity"
+            android:name=".view.activities.CreatePost"
             android:exported="false" />
 
         <meta-data
@@ -41,10 +41,10 @@
             android:value="@string/google_map_api_key" />
 
         <activity
-            android:name=".view.activities.AuthActivity"
+            android:name=".view.activities.Authentication"
             android:exported="false" />
         <activity
-            android:name=".view.activities.SplashActivity"
+            android:name=".view.activities.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -12,7 +12,7 @@ import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ItemPostBinding
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
-import com.localeventhub.app.utils.ExifTransformation
+import com.localeventhub.app.utils.ImageTransform
 import com.squareup.picasso.Picasso
 
 class PostAdapter(private val posts: MutableList<Post>) :
@@ -57,7 +57,7 @@ class PostAdapter(private val posts: MutableList<Post>) :
         fun bind(post: Post) {
             binding.apply {
                 Picasso.get().load(post.user?.profileImageUrl)
-                    .transform(ExifTransformation(post.user?.profileImageUrl!!))
+                    .transform(ImageTransform(post.user?.profileImageUrl!!))
                     .placeholder(R.drawable.placeholder).into(userImage)
                 userName.text = post.user.name
                 postDate.text = Constants.getTimeAgo(post.timestamp)
@@ -65,7 +65,7 @@ class PostAdapter(private val posts: MutableList<Post>) :
                     postImage.visibility = View.GONE
                 } else {
                     postImage.visibility = View.VISIBLE
-                    Picasso.get().load(post.imageUrl).transform(ExifTransformation(post.imageUrl!!))
+                    Picasso.get().load(post.imageUrl).transform(ImageTransform(post.imageUrl!!))
                         .placeholder(R.drawable.placeholder).into(postImage)
                 }
                 val likedByList = post.getLikedByList()

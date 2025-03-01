@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
         }
         binding.fab.setOnClickListener {
-           startActivity(Intent(context,CreatePostActivity::class.java))
+           startActivity(Intent(context,CreatePost::class.java))
         }
 
 

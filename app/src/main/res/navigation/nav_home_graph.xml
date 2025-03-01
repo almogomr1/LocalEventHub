@@ -6,9 +6,9 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.localeventhub.app.view.fragments.HomeFragment"
+        android:name="com.localeventhub.app.view.fragments.Home"
         android:label="Home"
-        tools:layout="@layout/fragment_home">
+        tools:layout="@layout/home">
         <action
             android:id="@+id/action_home_to_mapView"
             app:destination="@id/mapViewFragment" />
@@ -26,9 +26,9 @@
 
     <fragment
         android:id="@+id/mapViewFragment"
-        android:name="com.localeventhub.app.view.fragments.MapViewFragment"
+        android:name="com.localeventhub.app.view.fragments.Map"
         android:label="Map View"
-        tools:layout="@layout/fragment_map_view" >
+        tools:layout="@layout/map" >
         <action
             android:id="@+id/action_mapView_to_postDetails"
             app:destination="@id/postDetailsFragment" />
@@ -36,21 +36,21 @@
 
     <fragment
         android:id="@+id/postDetailsFragment"
-        android:name="com.localeventhub.app.view.fragments.PostDetailsFragment"
+        android:name="com.localeventhub.app.view.fragments.PostDetails"
         android:label="Post Details"
-        tools:layout="@layout/fragment_post_details" />
+        tools:layout="@layout/post_details" />
 
     <fragment
         android:id="@+id/notificationsFragment"
-        android:name="com.localeventhub.app.view.fragments.NotificationsFragment"
+        android:name="com.localeventhub.app.view.fragments.Notifications"
         android:label="Notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/notifications" />
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.localeventhub.app.view.fragments.ProfileFragment"
+        android:name="com.localeventhub.app.view.fragments.Profile"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile">
+        tools:layout="@layout/profile">
         <action
             android:id="@+id/action_profile_to_editProfile"
             app:popUpToInclusive="true"
@@ -60,9 +60,9 @@
 
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.localeventhub.app.view.fragments.EditProfileFragment"
+        android:name="com.localeventhub.app.view.fragments.EditProfile"
         android:label="Edit Profile"
-        tools:layout="@layout/fragment_edit_profile">
+        tools:layout="@layout/edit_profile">
 
         <action
             android:id="@+id/action_editProfile_to_profile"

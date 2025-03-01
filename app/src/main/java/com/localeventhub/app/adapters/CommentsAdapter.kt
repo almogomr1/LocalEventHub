@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.localeventhub.app.R
 import com.localeventhub.app.databinding.ItemCommentBinding
 import com.localeventhub.app.model.Comment
-import com.localeventhub.app.utils.ExifTransformation
+import com.localeventhub.app.utils.ImageTransform
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -48,7 +48,7 @@ class CommentsAdapter : RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(comment: Comment) {
-            Picasso.get().load(comment.user?.profileImageUrl).transform(ExifTransformation(comment.user?.profileImageUrl!!))
+            Picasso.get().load(comment.user?.profileImageUrl).transform(ImageTransform(comment.user?.profileImageUrl!!))
                 .placeholder(R.drawable.placeholder).into(binding.avatarImageView)
             binding.commentTextView.text = comment.content
             binding.dateTimeTextView.text =
