@@ -54,6 +54,7 @@ class CommentsAdapter : RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>(
                 .resize(200,200)
                 .centerCrop()
                 .into(binding.avatarImageView)
+            binding.userName.text = comment.user?.name
             binding.commentTextView.text = comment.content
             binding.dateTimeTextView.text =
                 SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(

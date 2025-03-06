@@ -68,10 +68,11 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
     }
 
-    private suspend fun setupTagSpinner() {
+    private fun setupTagSpinner() {
         val tagList = mutableListOf<String>()
-        tagList.add("All")
         postViewModel.tags.observe(this@MainActivity) { tags ->
+            tagList.clear()
+            tagList.add("All")
             // Convert to list
             val list = tags.toList()
 
