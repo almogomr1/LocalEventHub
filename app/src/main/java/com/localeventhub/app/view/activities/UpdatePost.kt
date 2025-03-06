@@ -94,8 +94,11 @@ class UpdatePost : AppCompatActivity() {
                 if (post?.imageUrl!!.isNotEmpty()) {
                     binding.uploadImageWrapper.visibility = View.GONE
                     Picasso.get().load(post?.imageUrl)
-                        .transform(ImageTransform(post?.imageUrl!!))
-                        .placeholder(R.drawable.placeholder).into(binding.postImage)
+//                        .transform(ImageTransform(post?.imageUrl!!))
+                        .placeholder(R.drawable.placeholder)
+                        .resize(600,400)
+                        .centerCrop()
+                        .into(binding.postImage)
                 }
 
                 binding.description.setText(post?.description)

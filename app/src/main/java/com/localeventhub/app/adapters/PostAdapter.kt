@@ -57,16 +57,23 @@ class PostAdapter(private val posts: MutableList<Post>) :
         fun bind(post: Post) {
             binding.apply {
                 Picasso.get().load(post.user?.profileImageUrl)
-                    .transform(ImageTransform(post.user?.profileImageUrl!!))
-                    .placeholder(R.drawable.placeholder).into(userImage)
-                userName.text = post.user.name
+//                    .transform(ImageTransform(post.user?.profileImageUrl!!))
+                    .placeholder(R.drawable.placeholder)
+                    .resize(200,200)
+                    .centerCrop()
+                    .into(userImage)
+                userName.text = post.user?.name
                 postDate.text = Constants.getTimeAgo(post.timestamp)
                 if (post.imageUrl.isNullOrEmpty()) {
                     postImage.visibility = View.GONE
                 } else {
                     postImage.visibility = View.VISIBLE
-                    Picasso.get().load(post.imageUrl).transform(ImageTransform(post.imageUrl!!))
-                        .placeholder(R.drawable.placeholder).into(postImage)
+                    Picasso.get().load(post.imageUrl)
+//                        .transform(ImageTransform(post.imageUrl!!))
+                        .placeholder(R.drawable.placeholder)
+                        .resize(600,400)
+                        .centerCrop()
+                        .into(postImage)
                 }
                 val likedByList = post.getLikedByList()
                 val isLiked = likedByList.contains(Constants.loggedUserId)
@@ -113,7 +120,7 @@ class PostAdapter(private val posts: MutableList<Post>) :
             val popupMenu = PopupMenu(view.context, view)
             popupMenu.menuInflater.inflate(R.menu.post_pop_up_menu, popupMenu.menu)
 
-            if (item.user?.userId != Constants.loggedUserId) {
+            if (item.userId != Constants.loggedUserId) {
                 popupMenu.menu.findItem(R.id.menu_edit).isVisible = false
                 popupMenu.menu.findItem(R.id.menu_delete).isVisible = false
             } else {

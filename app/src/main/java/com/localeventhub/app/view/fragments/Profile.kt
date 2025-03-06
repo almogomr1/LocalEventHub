@@ -43,8 +43,10 @@ class Profile : Fragment() {
         val user = Constants.loggedUser
         if (user != null){
             Picasso.get().load(user.profileImageUrl)
-                .transform(ImageTransform(user.profileImageUrl!!))
+//                .transform(ImageTransform(user.profileImageUrl!!))
                 .placeholder(R.drawable.placeholder)
+                .resize(200,200)
+                .centerCrop()
                 .into(binding.profileImage)
             binding.name.setText(user.name)
             binding.email.setText(user.email)

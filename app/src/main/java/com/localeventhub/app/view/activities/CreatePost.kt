@@ -140,6 +140,7 @@ class CreatePost : AppCompatActivity() {
                             imageUrl = url,
                             eventLocation,
                             tags = tags.split(",").toList(),
+                            user = Constants.loggedUser
                         )
                        postViewModel.addPost(post){status,message->
                            Constants.dismiss()
@@ -154,7 +155,8 @@ class CreatePost : AppCompatActivity() {
                         description =description,
                         imageUrl = "",
                         eventLocation,
-                        tags = tags.split(",").toList()
+                        tags = tags.split(",").toList(),
+                        user = Constants.loggedUser
                     )
                     postViewModel.addPost(post){status,message->
                         Constants.dismiss()

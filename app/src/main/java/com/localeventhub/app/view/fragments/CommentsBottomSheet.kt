@@ -127,7 +127,7 @@ class CommentsBottomSheet(
             postId = post.postId,
             type = "comment",
             senderId = Constants.loggedUserId,
-            receiverId = post.user!!.userId,
+            receiverId = post.userId,
             message = "${Constants.loggedUser?.name} commented on your post.",
             timestamp = System.currentTimeMillis()
         )

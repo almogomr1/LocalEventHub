@@ -48,7 +48,11 @@ class PostDetails : Fragment() {
         post = arguments?.getSerializable("post") as? Post
 
         post?.let {
-            Picasso.get().load(post?.user?.profileImageUrl).transform(ImageTransform(post?.user?.profileImageUrl!!)).placeholder(R.drawable.placeholder).into(binding.userImage)
+            Picasso.get().load(post?.user?.profileImageUrl)
+//                .transform(ImageTransform(post?.user?.profileImageUrl!!)).placeholder(R.drawable.placeholder)
+                .resize(200,200)
+                .centerCrop()
+                .into(binding.userImage)
             binding.userName.text = post?.user?.name
             binding.postDate.text = Constants.getTimeAgo(post!!.timestamp)
             if (post!!.imageUrl.isNullOrEmpty()){
@@ -56,7 +60,11 @@ class PostDetails : Fragment() {
             }
             else{
                 binding.postImage.visibility = View.VISIBLE
-                Picasso.get().load(post!!.imageUrl).transform(ImageTransform(post!!.imageUrl as String)).placeholder(R.drawable.placeholder).into(binding.postImage)
+                Picasso.get().load(post!!.imageUrl)
+//                    .transform(ImageTransform(post!!.imageUrl as String)).placeholder(R.drawable.placeholder)
+                    .resize(600,400)
+                    .centerCrop()
+                    .into(binding.postImage)
             }
 
             binding.postDescription.text = post!!.description
@@ -91,7 +99,7 @@ class PostDetails : Fragment() {
                                 binding.postLikeView.apply {
                                     text = "Like"
                                     setTypeface(null, Typeface.NORMAL)
-                                    setTextColor(ContextCompat.getColor(context, R.color.black))
+                                    setTextColor(ContextCompat.getColor(context, R.color.white))
                                 }
 
                             } else {
@@ -123,7 +131,7 @@ class PostDetails : Fragment() {
         popupMenu.menuInflater.inflate(R.menu.post_pop_up_menu, popupMenu.menu)
 
         popupMenu.menu.findItem(R.id.menu_view).isVisible = false
-        if (item.user?.userId != Constants.loggedUserId) {
+        if (item.userId != Constants.loggedUserId) {
             popupMenu.menu.findItem(R.id.menu_edit).isVisible = false
             popupMenu.menu.findItem(R.id.menu_delete).isVisible = false
         }
@@ -175,7 +183,7 @@ class PostDetails : Fragment() {
             postId = post.postId,
             type = "like",
             senderId = Constants.loggedUserId,
-            receiverId = post.user!!.userId,
+            receiverId = post.userId,
             message = "${Constants.loggedUser?.name} liked your post.",
             timestamp = System.currentTimeMillis()
         )

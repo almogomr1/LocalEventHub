@@ -216,7 +216,7 @@ class Home : Fragment() {
             postId = post.postId,
             type = "like",
             senderId = Constants.loggedUserId,
-            receiverId = post.user!!.userId,
+            receiverId = post.userId,
             message = "${Constants.loggedUser?.name} liked your post.",
             timestamp = System.currentTimeMillis()
         )

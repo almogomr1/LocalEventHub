@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController!!.navigateUp() || super.onSupportNavigateUp()
+    }
+
     private fun setUpToolbar(){
         setSupportActionBar(binding.toolbar)
         binding.toolbar.apply {
