@@ -1,5 +1,6 @@
 package com.localeventhub.app.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -7,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.localeventhub.app.model.Post
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
@@ -34,5 +36,8 @@ interface PostDao {
 
     @Query("UPDATE posts SET likedBy = :likedBy WHERE post_id = :postId")
     suspend fun updateLikedBy(postId: String, likedBy: String)
+
+    @Query("SELECT tags FROM posts")
+    fun getAllTags(): LiveData<List<String>>
 
 }

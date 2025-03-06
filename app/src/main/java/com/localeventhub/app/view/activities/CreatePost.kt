@@ -255,6 +255,7 @@ class CreatePost : AppCompatActivity() {
         binding.location.setText("")
         selectedImageUri = null
         eventLocation = null
+        finish()
     }
 
     private fun setUpToolbar() {

@@ -17,7 +17,9 @@ import com.localeventhub.app.repository.DatabaseRepository
 import com.localeventhub.app.retrofit.ChatGptApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -37,6 +39,8 @@ class PostViewModel @Inject constructor(
     val notifications: StateFlow<List<Notification>> get() = _notifications
 
     private val allPosts = mutableListOf<Post>()
+
+    val tags: LiveData<List<String>> = database.getAllUniqueTags()
 
     fun getPostId(): String {
         return database.getPostId()
@@ -172,7 +176,7 @@ class PostViewModel @Inject constructor(
         if (allPosts.isEmpty()) {
             return
         }
-        _posts.value = if (query.isEmpty()) {
+        _posts.value = if (query.isEmpty() or (query.lowercase() == "all")) {
             allPosts
         } else {
             allPosts.filter { post ->

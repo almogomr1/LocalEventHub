@@ -93,6 +93,10 @@ class Home : Fragment() {
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
         postViewModel.loadPosts(isOnline = Constants.isOnline(requireActivity()))
     }
 
@@ -136,6 +140,10 @@ class Home : Fragment() {
         })
     }
 
+    fun updateSelectedTag(tag: String) {
+        postViewModel.searchPostsByTag(tag)
+    }
+
     private fun setupRecyclerView() {
         postAdapter = PostAdapter(mutableListOf())
         binding.homePostsRecyclerview.apply {
@@ -166,7 +174,7 @@ class Home : Fragment() {
                         postViewModel.deletePost(post) { status, message ->
                             if (status) {
                                 posts.removeAt(position)
-                                postAdapter.notifyItemChanged(position)
+                                postAdapter.notifyDataSetChanged()
                                 Constants.showAlert(requireActivity(), message)
                             } else {
                                 Constants.showAlert(requireActivity(), message)

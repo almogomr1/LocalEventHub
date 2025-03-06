@@ -16,6 +16,8 @@ import com.localeventhub.app.room.PostDao
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -33,55 +35,57 @@ class DatabaseRepository @Inject constructor(
     }
 
     fun addPost(post: Post, callback: (Boolean, String) -> Unit) {
+        postDao.insertPost(post) // Save post locally
+        callback(true, "Post added successfully")
         firestore.collection("POSTS")
             .document(post.postId)
             .set(post)
             .addOnSuccessListener {
-                postDao.insertPost(post) // Save post locally
-                callback(true, "Post added successfully")
             }
             .addOnFailureListener { e ->
-                callback(false, "Error adding post: ${e.message}")
+                //callback(false, "Error adding post: ${e.message}")
             }
     }
 
     fun updatePost(post: Post, callback: (Boolean, String) -> Unit) {
+        postDao.updatePost(post)
+        callback(true, "Post updated successfully")
         val postRef = firestore.collection("POSTS").document(post.postId)
         postRef.set(post)
             .addOnSuccessListener {
-                postDao.updatePost(post)
-                callback(true, "Post updated successfully")
+
             }
             .addOnFailureListener { e ->
-                callback(false, "Error updating post: ${e.message}")
+               // callback(false, "Error updating post: ${e.message}")
             }
     }
 
     fun updatePostLikes(postId: String, likedByList: List<String>, callback: (Boolean, String) -> Unit) {
+        val likedByJson = Gson().toJson(likedByList)
+        CoroutineScope(Dispatchers.IO).launch {
+            postDao.updateLikedBy(postId,likedByJson)
+        }
+        callback(true, "Likes updated successfully")
         val postRef = firestore.collection("POSTS").document(postId)
-
         postRef.update("likedBy", likedByList)
             .addOnSuccessListener {
-                val likedByJson = Gson().toJson(likedByList)
-                CoroutineScope(Dispatchers.IO).launch {
-                    postDao.updateLikedBy(postId,likedByJson)
-                }
-                callback(true, "Likes updated successfully")
+
             }
             .addOnFailureListener { exception ->
-                callback(false, exception.message ?: "Error updating likes")
+                //callback(false, exception.message ?: "Error updating likes")
             }
     }
 
     fun deletePost(post: Post, callback: (Boolean, String) -> Unit) {
+        postDao.deletePost(post) // Delete locally
+        callback(true, "Post deleted successfully")
         firestore.collection("POSTS").document(post.postId)
             .delete()
             .addOnSuccessListener {
-                postDao.deletePost(post) // Delete locally
-                callback(true, "Post deleted successfully")
+
             }
             .addOnFailureListener { e ->
-                callback(false, "Error deleting post: ${e.message}")
+                //callback(false, "Error deleting post: ${e.message}")
             }
     }
 
@@ -146,30 +150,32 @@ class DatabaseRepository @Inject constructor(
     }
 
     fun addComment(comment: Comment, callback: (Boolean, String) -> Unit) {
+        CoroutineScope(ioDispatcher).launch {
+            commentDao.insertComment(comment) // Save comment locally
+        }
+        callback(true, "Comment added successfully")
         val commentRef = firestore.collection("COMMENTS").document(comment.commentId)
         commentRef.set(comment)
             .addOnSuccessListener {
-                CoroutineScope(ioDispatcher).launch {
-                    commentDao.insertComment(comment) // Save comment locally
-                }
-                callback(true, "Comment added successfully")
+
             }
             .addOnFailureListener { e ->
-                callback(false, "Error adding comment: ${e.message}")
+                //callback(false, "Error adding comment: ${e.message}")
             }
     }
 
     fun deleteComment(commentId: String, callback: (Boolean, String) -> Unit) {
+        CoroutineScope(ioDispatcher).launch {
+            commentDao.deleteCommentById(commentId) // Delete comment locally
+        }
+        callback(true, "Comment deleted successfully")
         firestore.collection("COMMENTS").document(commentId)
             .delete()
             .addOnSuccessListener {
-                CoroutineScope(ioDispatcher).launch {
-                    commentDao.deleteCommentById(commentId) // Delete comment locally
-                }
-                callback(true, "Comment deleted successfully")
+
             }
             .addOnFailureListener { e ->
-                callback(false, "Error deleting comment: ${e.message}")
+                //callback(false, "Error deleting comment: ${e.message}")
             }
     }
 
@@ -231,5 +237,9 @@ class DatabaseRepository @Inject constructor(
                     notificationDao.insertNotifications(notifications)
                 }
             }
+    }
+
+    fun getAllUniqueTags(): LiveData<List<String>> {
+        return postDao.getAllTags()
     }
 }

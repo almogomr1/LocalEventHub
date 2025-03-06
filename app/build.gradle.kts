@@ -68,6 +68,7 @@ dependencies {
     // LiveData
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     // Lifecycles only (without ViewModel or LiveData)
     implementation(libs.androidx.lifecycle.runtime)
 
