@@ -97,7 +97,7 @@ class AuthViewModel @Inject constructor(
         return firebaseRepository.checkUserAuth()
     }
 
-    fun getLoggedUserId(): String {
+    private fun getLoggedUserId(): String {
         return firebaseRepository.getLoggedUserId()
     }
 

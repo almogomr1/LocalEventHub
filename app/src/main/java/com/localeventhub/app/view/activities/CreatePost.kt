@@ -37,6 +37,7 @@ import com.localeventhub.app.databinding.CreatePostBinding
 import com.localeventhub.app.model.EventLocation
 import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
+import com.localeventhub.app.viewmodel.AuthViewModel
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ class CreatePost : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationPickerLauncher: ActivityResultLauncher<Intent>
     private val postViewModel: PostViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     private var selectedImageUri: Uri? = null
     private var eventLocation: EventLocation? = null
@@ -82,7 +84,7 @@ class CreatePost : AppCompatActivity() {
         binding = CreatePostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         context = this
-
+        authViewModel.fetUserDetails()
         setUpToolbar()
         initPlaces()
 
