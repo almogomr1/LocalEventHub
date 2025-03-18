@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
 
     private lateinit var context: Context
-    private val authViewModel: AuthViewModel by viewModels()
     private val postViewModel: PostViewModel by viewModels()
     private lateinit var navController: NavController
 
@@ -116,7 +115,6 @@ class MainActivity : AppCompatActivity(),OnFragmentChangeListener {
 
     override fun onResume() {
         super.onResume()
-        authViewModel.fetUserDetails()
         lifecycleScope.launch {
             delay(5000)
             setupTagSpinner()

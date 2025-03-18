@@ -11,5 +11,6 @@ interface FirebaseRepository {
     fun checkUserAuth():Boolean
     fun getLoggedUserId():String
     fun fetchUserDetails(id:String)
+    fun fetUserDetailsFromFirestore(callback: (Boolean, User?) -> Unit)
     fun logout()
 }

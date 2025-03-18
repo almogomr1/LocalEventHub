@@ -9,6 +9,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.View.OnAttachStateChangeListener
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -26,6 +27,7 @@ import com.localeventhub.app.model.Post
 import com.localeventhub.app.utils.Constants
 import com.localeventhub.app.view.activities.MainActivity
 import com.localeventhub.app.view.activities.UpdatePost
+import com.localeventhub.app.viewmodel.AuthViewModel
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -37,7 +39,7 @@ class Home : Fragment() {
 
     private lateinit var binding: HomeBinding
     private var listener: OnFragmentChangeListener? = null
-
+    private val authViewModel: AuthViewModel by viewModels()
     private val postViewModel: PostViewModel by viewModels()
     private lateinit var postAdapter: PostAdapter
     private var posts = mutableListOf<Post>()
@@ -63,11 +65,14 @@ class Home : Fragment() {
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         binding.loadingSpinner.visibility = View.VISIBLE
         lifecycleScope.launch {
+            authViewModel.fetUserDetails()
             delay(1000)
             postViewModel.posts.collect { postList ->
                 if (postList.isNotEmpty()) {
@@ -223,7 +228,7 @@ class Home : Fragment() {
             id = UUID.randomUUID().toString(),
             postId = post.postId,
             type = "like",
-            senderId = Constants.loggedUserId,
+            senderId = "${Constants.loggedUser?.userId}",
             receiverId = post.userId,
             message = "${Constants.loggedUser?.name} liked your post.",
             timestamp = System.currentTimeMillis()

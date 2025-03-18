@@ -51,6 +51,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    Constants.loggedUserId = getLoggedUserId()
                     callback(true, null)
                 } else {
                     val errorMessage = when (val exception = task.exception) {
@@ -138,6 +139,23 @@ class FirebaseRepositoryImpl @Inject constructor(
             }
             .addOnFailureListener { exception ->
                 Log.e("Firebase", "Error fetching user data", exception)
+            }
+    }
+
+    override fun fetUserDetailsFromFirestore(callback: (Boolean, User?) -> Unit) {
+        usersRef.document(auth.currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val user = document.toObject(User::class.java)
+                    if (user != null) {
+                        callback(true,user)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firebase", "Error fetching user data", exception)
+              callback(false,null)
             }
     }
 

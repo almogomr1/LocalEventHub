@@ -148,13 +148,13 @@ class PostViewModel @Inject constructor(
             if (isOnline) {
                 database.syncNotificationsFromFireStore(receiverId)
             }
-            _notifications.value =  database.getAllNotifications()
+            _notifications.value =  database.getAllNotifications(receiverId)
 
         }
     }
 
-    fun getAllNotifications(): List<Notification> {
-        return database.getAllNotifications()
+    fun getAllNotifications(receiverId:String): List<Notification> {
+        return database.getAllNotifications(receiverId)
     }
 
     fun saveNotification(notification: Notification) {

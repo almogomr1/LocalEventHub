@@ -85,6 +85,10 @@ class AuthViewModel @Inject constructor(
         firebaseRepository.fetchUserDetails(getLoggedUserId())
     }
 
+    fun fetUserDetailsFromFirestore(callback: (Boolean, User?) -> Unit){
+        firebaseRepository.fetUserDetailsFromFirestore(callback)
+    }
+
     fun saveUserData(user: User,imageUri: Uri?) {
         firebaseRepository.saveUserData(user,imageUri!!)
     }
@@ -97,7 +101,7 @@ class AuthViewModel @Inject constructor(
         return firebaseRepository.checkUserAuth()
     }
 
-    private fun getLoggedUserId(): String {
+     fun getLoggedUserId(): String {
         return firebaseRepository.getLoggedUserId()
     }
 

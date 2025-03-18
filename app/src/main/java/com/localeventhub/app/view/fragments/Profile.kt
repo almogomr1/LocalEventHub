@@ -3,6 +3,8 @@ package com.localeventhub.app.view.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -40,17 +42,11 @@ class Profile : Fragment() {
     ): View? {
         binding =  ProfileBinding.inflate(inflater, container, false)
 
-        val user = Constants.loggedUser
-        if (user != null){
-            Picasso.get().load(user.profileImageUrl)
-//                .transform(ImageTransform(user.profileImageUrl!!))
-                .placeholder(R.drawable.placeholder)
-                .resize(200,200)
-                .centerCrop()
-                .into(binding.profileImage)
-            binding.name.setText(user.name)
-            binding.email.setText(user.email)
-        }
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.editBtn.setOnClickListener {
             listener?.navigateToFragment(R.id.action_profile_to_editProfile)
@@ -58,12 +54,46 @@ class Profile : Fragment() {
 
         binding.logoutBtn.setOnClickListener {
             authViewModel.logout()
+            Constants.loggedUserId = ""
+            Constants.loggedUser = null
             val intent = Intent(context, Authentication::class.java)
             requireActivity().startActivity(intent)
             requireActivity().finish()
         }
-
-        return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val user = Constants.loggedUser
+        if (user != null){
+            binding.name.setText(user.name)
+            binding.email.setText(user.email)
+            Picasso.get().load(user.profileImageUrl)
+//                .transform(ImageTransform(user.profileImageUrl!!))
+                .placeholder(R.drawable.placeholder)
+                .resize(200,200)
+                .centerCrop()
+                .into(binding.profileImage)
+
+        }
+        else {
+            binding.loadingSpinner.visibility = View.VISIBLE
+            authViewModel.fetUserDetailsFromFirestore(){status,newUser ->
+                binding.loadingSpinner.visibility = View.GONE
+                Constants.loggedUser = newUser
+                if (newUser != null){
+                    binding.name.setText(newUser.name)
+                    binding.email.setText(newUser.email)
+                    Picasso.get().load(newUser.profileImageUrl)
+//                .transform(ImageTransform(user.profileImageUrl!!))
+                        .placeholder(R.drawable.placeholder)
+                        .resize(200,200)
+                        .centerCrop()
+                        .into(binding.profileImage)
+
+                }
+            }
+        }
+    }
 }

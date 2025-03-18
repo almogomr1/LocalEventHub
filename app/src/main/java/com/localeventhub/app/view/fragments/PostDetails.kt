@@ -182,7 +182,7 @@ class PostDetails : Fragment() {
             id = UUID.randomUUID().toString(),
             postId = post.postId,
             type = "like",
-            senderId = Constants.loggedUserId,
+            senderId = "${Constants.loggedUser?.userId}",
             receiverId = post.userId,
             message = "${Constants.loggedUser?.name} liked your post.",
             timestamp = System.currentTimeMillis()

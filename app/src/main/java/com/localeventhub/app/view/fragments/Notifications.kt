@@ -12,6 +12,7 @@ import com.localeventhub.app.adapters.NotificationAdapter
 import com.localeventhub.app.databinding.NotificationsBinding
 import com.localeventhub.app.model.Notification
 import com.localeventhub.app.utils.Constants
+import com.localeventhub.app.viewmodel.AuthViewModel
 import com.localeventhub.app.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -22,6 +23,7 @@ class Notifications : Fragment() {
 
     private lateinit var binding:NotificationsBinding
     private val postViewModel: PostViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
     private lateinit var notificationAdapter: NotificationAdapter
     private var notifications = mutableListOf<Notification>()
 
@@ -64,8 +66,7 @@ class Notifications : Fragment() {
                 notificationAdapter.updateNotifications(notifications)
             }
         }
-
-        postViewModel.loadNotifications(isOnline = true,Constants.loggedUserId)
+        postViewModel.loadNotifications(isOnline = true,if(Constants.loggedUser !=null){Constants.loggedUser!!.userId}else{authViewModel.getLoggedUserId()} )
     }
 
     private fun setupRecyclerView() {

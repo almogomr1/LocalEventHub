@@ -193,12 +193,21 @@ class DatabaseRepository @Inject constructor(
 
     private fun DocumentSnapshot.toComment(): Comment? {
         return try {
+            val user = get("user") as? Map<String, Any>
+            val commentUser = user?.let {
+                User(
+                    userId = it["userId"] as? String ?: "",
+                    name = it["name"] as? String ?: "",
+                    profileImageUrl = it["profileImageUrl"] as? String ?: ""
+                )
+            }
             Comment(
                 commentId = getString("commentId") ?: "",
                 postId = getString("postId") ?: "",
                 userId = getString("userId") ?: "",
                 content = getString("content") ?: "",
-                timestamp = getLong("timestamp") ?: 0L
+                timestamp = getLong("timestamp") ?: 0L,
+                user = commentUser
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -210,8 +219,8 @@ class DatabaseRepository @Inject constructor(
         return commentDao.getCommentsForPost(postId)
     }
 
-    fun getAllNotifications(): List<Notification> {
-        return notificationDao.getAllNotifications()
+    fun getAllNotifications(receiverId:String): List<Notification> {
+        return notificationDao.getAllNotifications(receiverId)
     }
 
     suspend fun insertNotification(notification: Notification) {
